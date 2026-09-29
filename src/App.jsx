@@ -68,23 +68,41 @@ function BranchPicker({ open, onClose, onChoose, selectedId }) {
         <p className="eyebrow eyebrow--light">Tu pedido empieza acá</p>
         <h2 id="branch-title">¿Cuál te queda más cerca?</h2>
         <p className="branch-modal__intro">
-          Elegí tu sucursal y te llevamos directo a su tienda online.
-        </p>
+            Elegí tu sucursal y te llevamos directo a su tienda online.
+          </p>
 
-        <div className="branch-options">
-          {branches.map((branch) => (
+          <div className="branch-options">
+          {branches.map((branch, index) => (
             <button
-              className={`branch-option ${selectedId === branch.id ? 'is-selected' : ''}`}
+              className={`branch-option ${
+                selectedId === branch.id ? 'is-selected' : ''
+              }`}
               type="button"
               key={branch.id}
               onClick={() => onChoose(branch)}
             >
-              <span className="branch-option__index">0{branches.indexOf(branch) + 1}</span>
-              <span>
+              <img
+                className="branch-option__image"
+                src={branch.image}
+                alt=""
+              />
+        
+              <span className="branch-option__badge">
+                Imagen demostrativa
+              </span>
+            
+              <span className="branch-option__index">
+                0{index + 1}
+              </span>
+            
+              <span className="branch-option__copy">
                 <strong>{branch.name}</strong>
                 <small>{branch.area}</small>
               </span>
-              <span className="branch-option__arrow"><ArrowIcon /></span>
+            
+              <span className="branch-option__arrow">
+                <ArrowIcon />
+              </span>
             </button>
           ))}
         </div>
