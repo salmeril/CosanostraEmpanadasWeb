@@ -2,7 +2,7 @@ export const branches = [
   {
     id: 'maritimo',
     name: 'B. Marítimo',
-    area: 'Calle 53 N.º 3104, Hudson',
+    area: 'Berazategui',
     image: '/assets/branches/maritimo.webp',
     orderUrl: 'https://pedidodirecto.ar/lacosanostramaritimo',
   },
@@ -23,7 +23,7 @@ export const branches = [
   {
     id: 'quilmes',
     name: 'Quilmes',
-    area: 'Humberto Primo N.º 162',
+    area: 'Quilmes centro',
     image: '/assets/branches/quilmes.webp',
     orderUrl: 'https://pedidodirecto.app/cosanostraquilmes',
   },

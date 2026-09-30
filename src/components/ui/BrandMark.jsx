@@ -1,15 +1,19 @@
-export default function BrandMark({ compact = false }) {
-  return (
-    <span className={`brand-mark ${compact ? 'brand-mark--compact' : ''}`}>
-      <span className="brand-monogram" aria-hidden="true">
-        CN
-      </span>
+/**
+ * Logo oficial de Cosa Nostra.
+ * En espacios chicos se utiliza únicamente el monograma "N".
+ */
+export default function BrandMark({ compact = false, light = true }) {
+  const file = compact
+    ? '/assets/brand/cosa-nostra-monograma.png'
+    : '/assets/brand/cosa-nostra-horizontal.png'
 
-      {!compact && (
-        <span className="brand-name">
-          Cosa Nostra
-        </span>
-      )}
+  return (
+    <span
+      className={`brand-mark ${compact ? 'brand-mark--compact' : ''} ${
+        light ? 'brand-mark--light' : ''
+      }`}
+    >
+      <img src={file} alt="Cosa Nostra Empanadas" />
     </span>
   )
 }
