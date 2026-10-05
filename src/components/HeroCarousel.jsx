@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react'
-
-const slides = [
-  { image: '/assets/branches/maritimo.webp', label: 'B. Marítimo' },
-  { image: '/assets/branches/ranelagh.webp', label: 'Ranelagh' },
-  { image: '/assets/branches/berazategui.webp', label: 'Berazategui' },
-  { image: '/assets/branches/quilmes.webp', label: 'Quilmes' },
-]
+import { heroProducts as slides } from '../data/productGallery.js'
 
 export default function HeroCarousel() {
   const [active, setActive] = useState(0)
@@ -28,11 +22,11 @@ export default function HeroCarousel() {
         {slides.map((slide, index) => (
           <figure
             className={`hero-carousel__slide ${index === active ? 'is-active' : ''}`}
-            key={slide.label}
+            key={slide.name}
             aria-hidden={index !== active}
           >
-            <img src={slide.image} alt={`Sucursal Cosa Nostra ${slide.label}`} />
-            <figcaption>{slide.label}</figcaption>
+            <img src={slide.image} alt={`Empanada de ${slide.name}`} />
+            <figcaption>{slide.name}</figcaption>
           </figure>
         ))}
       </div>
@@ -50,9 +44,9 @@ export default function HeroCarousel() {
             <button
               className={index === active ? 'is-active' : ''}
               type="button"
-              key={slide.label}
+              key={slide.name}
               onClick={() => setActive(index)}
-              aria-label={`Ver imagen de ${slide.label}`}
+              aria-label={`Ver empanada de ${slide.name}`}
               aria-current={index === active ? 'true' : undefined}
             />
           ))}

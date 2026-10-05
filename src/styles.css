@@ -69,7 +69,7 @@ svg { width: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; strok
 /* Hero */
 .hero { position: relative; display: grid; min-height: 100svh; grid-template-columns: 51% 49%; overflow: hidden; background: var(--cream); padding-top: 5.25rem; }
 .hero__copy { display: flex; flex-direction: column; justify-content: center; padding: 5rem clamp(2rem, 6vw, 6.5rem) 6rem clamp(1.2rem, 5vw, 5.5rem); }
-.hero h1, .manifesto h2, .quality-strip h2, .flavours h2, .locations h2, .club-teaser h2, .branch-modal h2 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -.055em; line-height: .94; }
+.hero h1, .manifesto h2, .quality-strip h2, .flavours h2, .product-gallery h2, .locations h2, .club-teaser h2, .branch-modal h2 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -.055em; line-height: .94; }
 .hero h1 { max-width: 10ch; color: var(--green); font-size: clamp(3.7rem, 6.2vw, 7.2rem); }
 .hero h1 em { color: var(--mustard); font-weight: 700; }
 .hero__lead { max-width: 34rem; margin: 1.8rem 0 0; color: #5e6156; font-size: clamp(.98rem, 1.2vw, 1.14rem); line-height: 1.75; }
@@ -80,7 +80,7 @@ svg { width: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; strok
 .hero-carousel__slide.is-active { z-index: 1; opacity: 1; pointer-events: auto; }
 .hero-carousel__slide::after { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,31,24,.2), transparent 45%, rgba(10,31,24,.6)); content: ''; }
 .hero-carousel__slide img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.88) contrast(1.02); transform: none; }
-.hero-carousel__slide figcaption { position: absolute; z-index: 2; bottom: 2.1rem; left: 2rem; color: var(--cream); font-size: .68rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.hero-carousel__slide figcaption { position: absolute; z-index: 2; bottom: 2.1rem; left: 2rem; isolation: isolate; border: 1px solid rgba(255,255,255,.32); background: rgba(13,43,33,.88); color: var(--cream); font-size: .68rem; font-weight: 700; letter-spacing: .11em; padding: .55rem .7rem; text-transform: uppercase; }
 .hero-carousel__controls { position: absolute; z-index: 4; right: 1.8rem; bottom: 1.5rem; display: flex; align-items: center; gap: .65rem; }
 .hero-carousel__controls > button { display: grid; width: 2.65rem; height: 2.65rem; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(11,35,27,.25); color: var(--cream); cursor: pointer; }
 .hero-carousel__dots { display: flex; gap: .32rem; }
@@ -97,16 +97,22 @@ svg { width: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; strok
 
 /* Nuestra forma */
 .manifesto { position: relative; display: grid; min-height: 42rem; grid-template-columns: 1fr 1fr; background: var(--cream); overflow: hidden; }
-.manifesto__panel { position: relative; display: flex; flex-direction: column; justify-content: center; padding: clamp(5rem, 8vw, 8rem) clamp(1.2rem, 5vw, 5.5rem); }
+.manifesto__panel { position: relative; display: flex; flex-direction: column; justify-content: center; padding: clamp(4.5rem, 6vw, 6.5rem) clamp(1.2rem, 5vw, 5.5rem); }
 .manifesto__content { max-width: 48rem; }
 .manifesto h2 { max-width: 12ch; color: var(--green); font-size: clamp(3rem, 5.1vw, 5.8rem); }
 .manifesto__content > p:last-child { max-width: 38rem; margin: 1.8rem 0 0; color: var(--muted); font-size: 1rem; line-height: 1.8; }
-.manifesto__stamp { align-self: flex-end; margin-top: 1.5rem; color: var(--mustard); font-family: var(--font-display); font-size: clamp(2rem, 3.3vw, 3.7rem); font-style: italic; line-height: .82; text-align: center; transform: rotate(6deg); }
+.manifesto__stamp { position: absolute; right: clamp(1.5rem, 4vw, 4rem); bottom: clamp(1.5rem, 3vw, 3rem); display: flex; width: clamp(8.8rem, 12vw, 11.5rem); aspect-ratio: 1; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--green); border-radius: 50%; background: rgba(251,245,234,.92); color: var(--green); box-shadow: inset 0 0 0 .38rem var(--cream), inset 0 0 0 .48rem var(--green); font-family: var(--font-display); line-height: .82; text-align: center; transform: rotate(-8deg); }
+.manifesto__stamp::before, .manifesto__stamp::after { position: absolute; left: 50%; color: var(--green); content: '✦'; font-family: var(--font-sans); font-size: .62rem; transform: translateX(-50%); }
+.manifesto__stamp::before { top: 1rem; }
+.manifesto__stamp::after { bottom: .92rem; }
+.manifesto__stamp span { font-family: var(--font-sans); font-size: .58rem; font-weight: 700; letter-spacing: .2em; margin-bottom: .5rem; text-transform: uppercase; }
+.manifesto__stamp strong { font-size: clamp(1.55rem, 2.4vw, 2.35rem); font-style: italic; font-weight: 700; }
+.manifesto__stamp small { margin-top: .55rem; font-family: var(--font-sans); font-size: .43rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
 .manifesto__visual { position: relative; min-height: 42rem; overflow: hidden; background: var(--green); }
 .manifesto__visual > img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Diferenciales */
-.quality-strip { display: grid; grid-template-columns: minmax(17rem, .75fr) 1.5fr; gap: clamp(3rem, 7vw, 8rem); padding: clamp(5rem, 8vw, 8rem) clamp(1.2rem, 5vw, 5.5rem); background: var(--cream-deep); }
+.quality-strip { display: grid; grid-template-columns: minmax(17rem, .75fr) 1.5fr; gap: clamp(3rem, 7vw, 8rem); padding: clamp(4.5rem, 6vw, 6.5rem) clamp(1.2rem, 5vw, 5.5rem); background: var(--cream-deep); }
 .quality-strip__intro { align-self: start; }
 .quality-strip h2 { max-width: 9ch; color: var(--green); font-size: clamp(3rem, 4.6vw, 5.3rem); }
 .quality-strip__intro > p:not(.eyebrow):not(.section-number) { max-width: 31rem; color: var(--muted); line-height: 1.75; }
@@ -128,6 +134,25 @@ svg { width: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; strok
 .product-card h3 { margin: 4.5rem 0 1rem; font-family: var(--font-display); font-size: clamp(2.1rem, 3.2vw, 3.8rem); letter-spacing: -.045em; }
 .product-card p { max-width: 19rem; color: rgba(249,238,227,.7); line-height: 1.7; }
 .product-card a { position: absolute; right: 2rem; bottom: 2rem; display: grid; width: 3rem; height: 3rem; place-items: center; border: 1px solid rgba(249,238,227,.5); border-radius: 50%; }
+
+/* Galería de producto */
+.product-gallery { overflow: hidden; background: var(--cream); padding: clamp(4.5rem, 6vw, 6.5rem) 0 clamp(3.5rem, 5vw, 5rem); }
+.product-gallery__heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding-inline: clamp(1.2rem, 5vw, 5.5rem); }
+.product-gallery h2 { max-width: 13ch; color: var(--green); font-size: clamp(2.9rem, 5.1vw, 5.6rem); }
+.product-gallery__intro { max-width: 44rem; margin: 1.7rem 0 0; color: var(--muted); line-height: 1.75; padding-inline: clamp(1.2rem, 5vw, 5.5rem); }
+.product-gallery__actions { display: flex; flex: 0 0 auto; gap: .65rem; }
+.product-gallery__actions button { display: grid; width: 3rem; height: 3rem; place-items: center; border: 1px solid var(--green); border-radius: 50%; background: transparent; color: var(--green); cursor: pointer; transition: background .25s ease, color .25s ease, transform .25s ease; }
+.product-gallery__actions button:first-child svg { transform: rotate(180deg); }
+.product-gallery__actions button:hover { background: var(--green); color: var(--cream); transform: translateY(-2px); }
+.product-gallery__track { display: grid; grid-auto-columns: minmax(17rem, 25vw); grid-auto-flow: column; gap: 1rem; overflow-x: auto; margin-top: 3.2rem; padding: 0 clamp(1.2rem, 5vw, 5.5rem) 1.2rem; scroll-padding-inline: clamp(1.2rem, 5vw, 5.5rem); scroll-snap-type: x mandatory; scrollbar-color: var(--mustard) transparent; scrollbar-width: thin; }
+.product-gallery__card { min-width: 0; margin: 0; scroll-snap-align: start; }
+.product-gallery__image { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--cream-deep); }
+.product-gallery__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .65s cubic-bezier(.2,.75,.25,1); }
+.product-gallery__card:hover img { transform: scale(1.035); }
+.product-gallery__image span { position: absolute; z-index: 2; top: .75rem; left: .75rem; background: rgba(13,43,33,.9); color: var(--cream); font-size: .54rem; font-weight: 700; letter-spacing: .08em; padding: .45rem .6rem; text-transform: uppercase; }
+.product-gallery__card figcaption { display: grid; grid-template-columns: 2rem 1fr; gap: .7rem; align-items: baseline; border-bottom: 1px solid var(--line); color: var(--green); padding: 1rem .1rem 1.2rem; }
+.product-gallery__card figcaption small { color: #81765a; font-size: .62rem; font-weight: 700; }
+.product-gallery__card figcaption strong { font-family: var(--font-display); font-size: clamp(1.4rem, 2.1vw, 2.1rem); letter-spacing: -.035em; line-height: 1.05; }
 
 /* Sucursales */
 .locations { display: grid; grid-template-columns: minmax(18rem, .8fr) 1.35fr; gap: clamp(3rem, 7vw, 8rem); padding: clamp(5rem, 9vw, 9rem) clamp(1.2rem, 5vw, 5.5rem); }
@@ -159,8 +184,12 @@ svg { width: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; strok
 
 /* Pie */
 footer { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 2rem; background: var(--green-dark); color: var(--cream); padding: 4rem clamp(1.2rem, 5vw, 5.5rem) 2rem; }
+footer .logo-link { align-items: center; min-height: 6.5rem; }
+footer .brand-mark { width: 11rem; height: 6.5rem; overflow: visible; }
+footer .brand-mark img { transform: scale(1.22); }
 footer > p { color: rgba(249,238,227,.65); text-align: center; }
 .footer-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 1.25rem; font-size: .76rem; }
+.footer-jobs { flex-basis: 100%; color: rgba(249,238,227,.48); font-size: .65rem; letter-spacing: .04em; text-align: right; }
 footer button { border: 0; background: transparent; color: inherit; cursor: pointer; padding: 0; }
 footer small { grid-column: 1 / -1; margin-top: 2rem; border-top: 1px solid rgba(249,238,227,.18); color: rgba(249,238,227,.5); font-size: .62rem; letter-spacing: .08em; padding-top: 1.3rem; text-transform: uppercase; }
 .mobile-order { display: none; }
@@ -220,6 +249,8 @@ footer small { grid-column: 1 / -1; margin-top: 2rem; border-top: 1px solid rgba
   .image-review-badge--hero { max-width: 13rem; }
   .manifesto { grid-template-columns: 1fr; }
   .manifesto__panel { padding-block: 5rem; }
+  .manifesto__content { padding-bottom: 8.5rem; }
+  .manifesto__stamp { right: 1.2rem; bottom: 1.4rem; width: 8.5rem; }
   .manifesto h2 { font-size: clamp(3rem, 13vw, 4.7rem); }
   .manifesto__visual { min-height: 28rem; }
   .quality-strip { padding-block: 5rem; }
@@ -229,6 +260,9 @@ footer small { grid-column: 1 / -1; margin-top: 2rem; border-top: 1px solid rgba
   .product-grid { grid-template-columns: 1fr; margin-top: 3rem; }
   .product-card { min-height: 17rem; border-right: 0; border-bottom: 1px solid rgba(249,238,227,.25); }
   .product-card h3 { margin-top: 3rem; }
+  .product-gallery__heading { align-items: flex-start; flex-direction: column; }
+  .product-gallery__track { grid-auto-columns: minmax(16rem, 78vw); margin-top: 2.4rem; }
+  .product-gallery__actions { align-self: flex-end; }
   .locations { display: block; }
   .locations__intro { position: static; margin-bottom: 3rem; }
   .location-list button { grid-template-columns: 4.2rem 1fr 2.4rem; padding-inline: .55rem; }
@@ -238,8 +272,11 @@ footer small { grid-column: 1 / -1; margin-top: 2rem; border-top: 1px solid rgba
   .club-teaser__mark { width: 5rem; }
   .club-teaser__content { grid-column: 1 / -1; justify-self: start; }
   footer { grid-template-columns: 1fr; padding-bottom: 7rem; }
+  footer .logo-link { min-height: 5.5rem; }
+  footer .brand-mark { width: 10rem; height: 5.5rem; }
   footer > p { text-align: left; }
   .footer-links { justify-content: flex-start; }
+  .footer-jobs { text-align: left; }
   .mobile-order { position: fixed; z-index: 60; right: .8rem; bottom: .8rem; left: .8rem; display: flex; min-height: 3.7rem; align-items: center; justify-content: space-between; background: var(--mustard); color: var(--green-dark); font-size: .72rem; font-weight: 700; letter-spacing: .07em; padding: .8rem 1.25rem; text-transform: uppercase; box-shadow: 0 1rem 2.5rem rgba(14,42,33,.28); }
   .branch-modal { padding: 1rem; }
   .branch-modal__content { margin: auto 0; }

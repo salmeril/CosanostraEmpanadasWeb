@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { animate, createScope, stagger } from 'animejs'
 
 import HeroCarousel from './components/HeroCarousel.jsx'
+import ProductGallery from './components/ProductGallery.jsx'
 import SpotlightCard from './components/SpotlightCard.jsx'
 import BrandMark from './components/ui/BrandMark.jsx'
 import { ArrowIcon, LocationIcon } from './components/ui/Icons.jsx'
@@ -247,6 +248,9 @@ function App() {
           <a href="#sabores" onClick={() => setMenuOpen(false)}>
             Sabores
           </a>
+          <a href="#galeria" onClick={() => setMenuOpen(false)}>
+            Galería
+          </a>
           <a href="#nosotros" onClick={() => setMenuOpen(false)}>
             Nosotros
           </a>
@@ -366,16 +370,20 @@ function App() {
             </div>
 
             <div className="manifesto__stamp" aria-hidden="true">
-              ¡A lo
-              <br />
-              grande!
+              <span>Hechas</span>
+              <strong>
+                A lo
+                <br />
+                grande
+              </strong>
+              <small>Cosa Nostra · Empanadas</small>
             </div>
           </div>
 
           <div className="manifesto__visual">
             <img
-              src="/assets/empanadas-marca.jpg"
-              alt="Empanadas grandes de Cosa Nostra"
+              src="/assets/products/matambre-a-la-pizza.webp"
+              alt="Empanada grande de matambre a la pizza"
             />
 
             <span className="image-review-badge">
@@ -463,10 +471,13 @@ function App() {
           </div>
         </section>
 
+        {/* GALERÍA ESCALABLE DE PRODUCTOS: LAS FOTOS Y LOS NOMBRES VIVEN EN DATA */}
+        <ProductGallery />
+
         {/* SUCURSALES */}
         <section className="locations" id="sucursales">
           <div className="locations__intro">
-            <p className="section-number">03 / CERCA TUYO</p>
+            <p className="section-number">04 / CERCA TUYO</p>
             <p className="eyebrow">Cuatro sucursales</p>
             <h2>Siempre hay un Cosa Nostra cerca.</h2>
             <p>
@@ -567,6 +578,10 @@ function App() {
           <button type="button" onClick={() => setPickerOpen(true)}>
             Sucursales
           </button>
+
+          <span className="footer-jobs" title="Canal de recepción a confirmar">
+            Trabajá con nosotros · Próximamente
+          </span>
         </div>
 
         <small>
