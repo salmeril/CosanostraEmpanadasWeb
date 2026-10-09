@@ -1,0 +1,22 @@
+RewriteEngine On
+
+# Fuerza HTTPS y una única versión del dominio.
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\.cosanostraempanadas\.com\.ar$ [NC]
+RewriteRule ^ https://cosanostraempanadas.com.ar%{REQUEST_URI} [L,R=301,NE]
+
+# Mantiene disponible la aplicación React en URLs internas.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+</IfModule>

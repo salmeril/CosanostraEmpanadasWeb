@@ -53,8 +53,11 @@ export default function ProductGallery() {
             <div className="product-gallery__image">
               <img
                 src={product.image}
-                alt={`Empanada de ${product.name}`}
-                loading={index < 4 ? 'eager' : 'lazy'}
+                alt={`Empanada Cosa Nostra de ${product.name}`}
+                width={product.width}
+                height={product.height}
+                loading="lazy"
+                decoding="async"
               />
               <span>Imagen de referencia · A revisar</span>
             </div>

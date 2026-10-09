@@ -25,7 +25,15 @@ export default function HeroCarousel() {
             key={slide.name}
             aria-hidden={index !== active}
           >
-            <img src={slide.image} alt={`Empanada de ${slide.name}`} />
+            <img
+              src={slide.image}
+              alt={`Empanada Cosa Nostra de ${slide.name}`}
+              width={slide.width}
+              height={slide.height}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              fetchPriority={index === 0 ? 'high' : 'low'}
+              decoding="async"
+            />
             <figcaption>{slide.name}</figcaption>
           </figure>
         ))}

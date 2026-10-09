@@ -4,12 +4,154 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#163b2f" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta
       name="description"
-      content="Cosa Nostra Empanadas. Elegí tu sucursal y hacé tu pedido online."
+      content="Empanadas de aproximadamente 180 g, pizzas y sabores clásicos y gourmet. Elegí Cosa Nostra en Hudson, Ranelagh, Berazategui o Quilmes y pedí online."
     />
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <title>Cosa Nostra Empanadas</title>
+
+    <link rel="canonical" href="https://cosanostraempanadas.com.ar/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/products/jamon-y-queso.webp"
+      fetchpriority="high"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content="Cosa Nostra Empanadas" />
+    <meta property="og:title" content="Empanadas en Berazategui y Quilmes | Cosa Nostra" />
+    <meta
+      property="og:description"
+      content="Empanadas hechas a lo grande, pizzas y sabores clásicos y gourmet. Elegí tu sucursal y pedí online."
+    />
+    <meta property="og:url" content="https://cosanostraempanadas.com.ar/" />
+    <meta
+      property="og:image"
+      content="https://cosanostraempanadas.com.ar/assets/products/jamon-y-queso.webp"
+    />
+    <meta property="og:image:alt" content="Empanada Cosa Nostra de jamón y queso con relleno abundante" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Empanadas en Berazategui y Quilmes | Cosa Nostra" />
+    <meta
+      name="twitter:description"
+      content="Empanadas hechas a lo grande. Elegí tu sucursal en Hudson, Ranelagh, Berazategui o Quilmes."
+    />
+    <meta
+      name="twitter:image"
+      content="https://cosanostraempanadas.com.ar/assets/products/jamon-y-queso.webp"
+    />
+
+    <title>Empanadas en Berazategui y Quilmes | Cosa Nostra</title>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://cosanostraempanadas.com.ar/#website",
+            "url": "https://cosanostraempanadas.com.ar/",
+            "name": "Cosa Nostra Empanadas",
+            "inLanguage": "es-AR",
+            "publisher": { "@id": "https://cosanostraempanadas.com.ar/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://cosanostraempanadas.com.ar/#organization",
+            "name": "Cosa Nostra Empanadas",
+            "url": "https://cosanostraempanadas.com.ar/",
+            "logo": "https://cosanostraempanadas.com.ar/assets/brand/cosa-nostra-horizontal.png",
+            "sameAs": [
+              "https://www.instagram.com/lacosanostra.maritimo/",
+              "https://www.instagram.com/lacosanostra.ranelagh/",
+              "https://www.instagram.com/cosanostra.empanadas/"
+            ]
+          },
+          {
+            "@type": "Restaurant",
+            "@id": "https://cosanostraempanadas.com.ar/#maritimo",
+            "name": "Cosa Nostra B. Marítimo",
+            "url": "https://cosanostraempanadas.com.ar/#sucursales",
+            "image": "https://cosanostraempanadas.com.ar/assets/branches/maritimo.webp",
+            "servesCuisine": ["Empanadas argentinas", "Pizza"],
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Calle 53 3104",
+              "addressLocality": "Hudson",
+              "addressRegion": "Buenos Aires",
+              "addressCountry": "AR"
+            },
+            "hasMap": "https://maps.app.goo.gl/2NcWfBfvjrfes8LX9",
+            "menu": "https://pedidodirecto.ar/lacosanostramaritimo",
+            "parentOrganization": { "@id": "https://cosanostraempanadas.com.ar/#organization" }
+          },
+          {
+            "@type": "Restaurant",
+            "@id": "https://cosanostraempanadas.com.ar/#ranelagh",
+            "name": "Cosa Nostra Ranelagh",
+            "url": "https://cosanostraempanadas.com.ar/#sucursales",
+            "image": "https://cosanostraempanadas.com.ar/assets/branches/ranelagh.webp",
+            "servesCuisine": ["Empanadas argentinas", "Pizza"],
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Calle 137 2802",
+              "addressLocality": "Ranelagh",
+              "addressRegion": "Buenos Aires",
+              "addressCountry": "AR"
+            },
+            "hasMap": "https://maps.app.goo.gl/n1rHymLQ57tw6EZw9",
+            "menu": "https://pedidodirecto.ar/lacosanostraranelagh",
+            "parentOrganization": { "@id": "https://cosanostraempanadas.com.ar/#organization" }
+          },
+          {
+            "@type": "Restaurant",
+            "@id": "https://cosanostraempanadas.com.ar/#berazategui",
+            "name": "Cosa Nostra Berazategui",
+            "url": "https://cosanostraempanadas.com.ar/#sucursales",
+            "image": "https://cosanostraempanadas.com.ar/assets/branches/berazategui.webp",
+            "servesCuisine": ["Empanadas argentinas", "Pizza"],
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Calle 149 895",
+              "addressLocality": "Berazategui",
+              "addressRegion": "Buenos Aires",
+              "addressCountry": "AR"
+            },
+            "hasMap": "https://maps.app.goo.gl/DEKQLrcrMKhfprMCA",
+            "menu": "https://pedidodirecto.app/cosanostraberazategui",
+            "parentOrganization": { "@id": "https://cosanostraempanadas.com.ar/#organization" }
+          },
+          {
+            "@type": "Restaurant",
+            "@id": "https://cosanostraempanadas.com.ar/#quilmes",
+            "name": "Cosa Nostra Quilmes",
+            "url": "https://cosanostraempanadas.com.ar/#sucursales",
+            "image": "https://cosanostraempanadas.com.ar/assets/branches/quilmes.webp",
+            "servesCuisine": ["Empanadas argentinas", "Pizza"],
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Humberto Primo 162",
+              "addressLocality": "Quilmes",
+              "addressRegion": "Buenos Aires",
+              "addressCountry": "AR"
+            },
+            "hasMap": "https://maps.app.goo.gl/Hu8aBWzB71pNgk1N9",
+            "menu": "https://pedidodirecto.app/cosanostraquilmes",
+            "parentOrganization": { "@id": "https://cosanostraempanadas.com.ar/#organization" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

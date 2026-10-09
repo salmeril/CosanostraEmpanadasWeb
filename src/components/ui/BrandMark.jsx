@@ -13,7 +13,13 @@ export default function BrandMark({ compact = false, light = true }) {
         light ? 'brand-mark--light' : ''
       }`}
     >
-      <img src={file} alt="Cosa Nostra Empanadas" />
+      <img
+        src={file}
+        alt="Cosa Nostra Empanadas"
+        width="2048"
+        height="2048"
+        decoding="async"
+      />
     </span>
   )
 }

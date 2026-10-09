@@ -1,39 +1,86 @@
-# Cosa Nostra — landing React
+# Cosa Nostra — landing V13 · cierre de etapa 1
 
-Primera versión de la landing de Cosa Nostra Empanadas, preparada con React y Vite.
+Landing de Cosa Nostra Empanadas desarrollada con React y Vite. Esta versión
+incluye el diseño interactivo aprobado, carruseles de producto, selección de
+sucursal y una base SEO técnica, on-page y local lista para publicar.
 
-## Librerías visuales
+## Ejecutar el proyecto
 
-- Anime.js 4: secuencias de entrada y animaciones con scope/limpieza para React.
-- React Bits: patrón `SpotlightCard` adaptado al lenguaje visual de Cosa Nostra.
+```bash
+npm install
+npm run dev
+```
 
-Se respeta `prefers-reduced-motion` para evitar animaciones cuando el usuario lo solicita.
-
-## Abrir el proyecto
-
-1. Abrí la carpeta `cosa-nostra-web` en Visual Studio Code.
-2. En la terminal ejecutá `npm install`.
-3. Ejecutá `npm run dev` para verla localmente.
-
-## Generar la versión para DonWeb
-
-Ejecutá:
+Para generar la versión de producción:
 
 ```bash
 npm run build
 ```
 
-Vite genera la carpeta `dist`. El contenido de esa carpeta es lo que se sube a `public_html` en DonWeb.
+Vite crea la carpeta `dist`. Para DonWeb se sube **el contenido de `dist`** a
+`public_html`, incluyendo los archivos ocultos como `.htaccess`.
 
-## Datos editables
+## SEO incluido
 
-Las sucursales y sus enlaces de Pedido Directo están al comienzo de `src/App.jsx`, dentro de `branches`.
+- Title y meta description orientados a empanadas y búsquedas locales.
+- Canonical, meta robots, Open Graph y Twitter Card.
+- Un único H1 y estructura semántica de encabezados.
+- `robots.txt` y `sitemap.xml` con imágenes principales.
+- JSON-LD para WebSite, Organization y las cuatro sucursales como Restaurant.
+- FAQ visible, direcciones, enlaces de Maps y perfiles sociales oficiales.
+- Hero prioritario y resto de imágenes con dimensiones, carga diferida y alt.
+- Redirección preparada a HTTPS y dominio sin `www` en `.htaccess`.
+- Eventos preparados para selección de sucursal y clics de pedido.
+- Firma discreta de OTB Creative Studio al final del footer.
 
-## Recursos pendientes de reemplazo
+## Activar Analytics
 
-- Logo original en SVG.
-- Fotografías originales de producto y locales.
-- Archivos web/licencias de las tipografías oficiales Palmore, Helvetica Neue LT Pro y Theodore Handwritten.
-- Confirmación final de direcciones, horarios, teléfonos y estado de la sucursal Quilmes.
+Copiar `.env.example` como `.env` y completar **una** de estas opciones:
 
-Hasta recibir esos recursos, la versión usa una imagen tomada del manual de marca y tipografías equivalentes de Google Fonts.
+```env
+VITE_GTM_ID=GTM-XXXXXXXX
+VITE_GA_MEASUREMENT_ID=
+```
+
+o, si no se usa Google Tag Manager:
+
+```env
+VITE_GTM_ID=
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+No se incluyeron IDs de otros proyectos. Después de cambiar las variables hay
+que volver a ejecutar `npm run build`.
+
+## Contenido editable
+
+- Sucursales, direcciones, Maps, Instagram y pedidos:
+  `src/data/branches.js`
+- Tarjetas de categorías y fotografías de fondo:
+  `src/data/productGroups.js`
+- Galería de productos: `src/data/productGallery.js`
+- Slides del hero y rellenos rotativos: componentes y datos dentro de `src/`
+- Metadatos y datos estructurados: `index.html`
+
+## Pendiente antes y después de publicar
+
+1. Reemplazar todas las imágenes marcadas como referencia por fotos aprobadas.
+2. Confirmar menú, gramajes, teléfonos, horarios y condiciones de entrega.
+3. Incorporar privacidad, términos y datos legales definitivos.
+4. Publicar y comprobar certificado HTTPS y redirecciones.
+5. Conectar el ID correcto de GTM o GA4 de Cosa Nostra.
+6. Dar de alta Search Console, enviar `/sitemap.xml` y solicitar indexación.
+7. Validar la URL pública con Rich Results Test y PageSpeed Insights.
+8. Actualizar los cuatro Perfiles de Empresa: categorías, horarios, fotos,
+   productos, landing, NAP, UTMs y gestión de reseñas.
+
+## Archivos técnicos relevantes
+
+- `public/robots.txt`
+- `public/sitemap.xml`
+- `public/.htaccess`
+- `public/_redirects`
+- `src/lib/analytics.js`
+- `.env.example`
+
+La auditoría detallada se entrega en `SEO_Checklist_Cosa_Nostra_2026.xlsx`.

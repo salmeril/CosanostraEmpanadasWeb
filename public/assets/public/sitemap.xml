@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+>
+  <url>
+    <loc>https://cosanostraempanadas.com.ar/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://cosanostraempanadas.com.ar/assets/products/jamon-y-queso.webp</image:loc>
+      <image:title>Empanada Cosa Nostra de jamón y queso</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cosanostraempanadas.com.ar/assets/products/pollo-al-champinon.webp</image:loc>
+      <image:title>Empanada Cosa Nostra de pollo al champiñón</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cosanostraempanadas.com.ar/assets/products/matambre-a-la-pizza.webp</image:loc>
+      <image:title>Empanada Cosa Nostra de matambre a la pizza</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cosanostraempanadas.com.ar/assets/products/germana.webp</image:loc>
+      <image:title>Empanada Cosa Nostra Germana</image:title>
+    </image:image>
+  </url>
+</urlset>
