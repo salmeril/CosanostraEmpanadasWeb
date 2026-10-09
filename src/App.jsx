@@ -455,6 +455,8 @@ function App() {
 
     sections.forEach((section) => section.classList.add('scroll-reveal'))
 
+    const narrowViewport = window.matchMedia('(max-width: 760px)').matches
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -463,7 +465,12 @@ function App() {
           observer.unobserve(entry.target)
         })
       },
-      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+      {
+        // En pantallas chicas las secciones son mucho más altas. Un umbral
+        // menor evita que queden bloques vacíos al desplazarse rápidamente.
+        threshold: narrowViewport ? 0.02 : 0.12,
+        rootMargin: narrowViewport ? '0px 0px -2% 0px' : '0px 0px -8% 0px',
+      },
     )
 
     sections.forEach((section) => observer.observe(section))

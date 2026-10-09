@@ -1,4 +1,4 @@
-# Cosa Nostra — landing V13 · cierre de etapa 1
+# Cosa Nostra — landing V14 · responsive final
 
 Landing de Cosa Nostra Empanadas desarrollada con React y Vite. Esta versión
 incluye el diseño interactivo aprobado, carruseles de producto, selección de
@@ -32,6 +32,8 @@ Vite crea la carpeta `dist`. Para DonWeb se sube **el contenido de `dist`** a
 - Redirección preparada a HTTPS y dominio sin `www` en `.htaccess`.
 - Eventos preparados para selección de sucursal y clics de pedido.
 - Firma discreta de OTB Creative Studio al final del footer.
+- Responsive móvil corregido para evitar desplazamiento horizontal, cortes y
+  franjas vacías en pantallas de 320 a 430 px.
 
 ## Activar Analytics
 
