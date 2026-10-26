@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { animate, createScope, stagger } from 'animejs'
 
 import HeroCarousel from './components/HeroCarousel.jsx'
+import BranchSocial from './components/BranchSocial.jsx'
+import BranchMapReview from './components/BranchMapReview.jsx'
 import ProductGallery from './components/ProductGallery.jsx'
 import SpotlightCard from './components/SpotlightCard.jsx'
 import BrandMark from './components/ui/BrandMark.jsx'
@@ -12,18 +14,17 @@ import { branches } from './data/branches.js'
 import { productGroups } from './data/productGroups.js'
 
 
-// Características principales de producto.
-// El peso queda señalado como aproximado hasta la confirmación del cliente.
+// Pilares de la historia y del producto.
 const productFacts = [
   {
     number: '01',
-    title: 'Peso real',
-    detail: 'Una empanada que se siente desde que llega a la mesa.',
+    title: '16 años de historia',
+    detail: 'Una marca que creció junto a sus barrios y sus sucursales.',
   },
   {
     number: '02',
-    title: 'Relleno generoso',
-    detail: 'Sabores reconocibles y abundantes en cada bocado.',
+    title: 'Aprox. 180 g por empanada',
+    detail: 'Una referencia del tamaño generoso; el peso puede variar según el sabor y cada tanda.',
   },
   {
     number: '03',
@@ -32,7 +33,7 @@ const productFacts = [
   },
 ]
 
-// Rellenos que rotan debajo del sello de 180 gramos.
+// Rellenos que rotan debajo del sello de los 16 años.
 // Todas las imágenes se mantienen identificadas como material de referencia.
 const productProofSlides = [
   {
@@ -72,9 +73,9 @@ const faqItems = [
       'Elegí B. Marítimo en Hudson, Ranelagh, Berazategui o Quilmes. La página te lleva al menú online de la sucursal seleccionada.',
   },
   {
-    question: '¿Cuánto pesa cada empanada?',
+    question: '¿Qué significa “Hechas a lo grande”?',
     answer:
-      'Cada empanada ronda los 180 gramos. El peso es aproximado y puede variar levemente según el sabor y el relleno.',
+      'Es la forma de contar una propuesta generosa en sabor, relleno y variedad. La forma y el tamaño pueden variar según cada sabor y cada tanda.',
   },
   {
     question: '¿Dónde veo el menú y los precios?',
@@ -206,10 +207,6 @@ function BranchPicker({ open, onClose, onChoose, selectedId }) {
                 decoding="async"
               />
 
-              <span className="branch-option__badge">
-                Imagen de referencia · Pendiente de reemplazo
-              </span>
-
               <span className="branch-option__index">
                 0{index + 1}
               </span>
@@ -237,7 +234,7 @@ function BranchPicker({ open, onClose, onChoose, selectedId }) {
 
 /**
  * Sección editorial de producto.
- * Combina el dato de 180 gramos con una imagen real enfocada en el relleno.
+ * Combina los 16 años de historia con imágenes reales enfocadas en el relleno.
  */
 function ProductProof() {
   const [activeProduct, setActiveProduct] = useState(0)
@@ -262,10 +259,10 @@ function ProductProof() {
       <div className="product-proof__marquee" aria-hidden="true">
         <div className="product-proof__marquee-track">
           <span>Hechas a lo grande</span><i>✦</i>
-          <span>180 gramos aprox.</span><i>✦</i>
+          <span>Hace 16 años</span><i>✦</i>
           <span>Relleno de verdad</span><i>✦</i>
           <span>Hechas a lo grande</span><i>✦</i>
-          <span>180 gramos aprox.</span><i>✦</i>
+          <span>Hace 16 años</span><i>✦</i>
           <span>Relleno de verdad</span><i>✦</i>
         </div>
       </div>
@@ -273,27 +270,27 @@ function ProductProof() {
       <div className="product-proof__body">
         <div className="product-proof__intro">
           <p className="section-number">01 / NUESTRA DIFERENCIA</p>
-          <p className="eyebrow eyebrow--light">No hacemos una más</p>
+          <p className="eyebrow eyebrow--light">Una historia que sigue creciendo</p>
           <h2 id="product-proof-title">
-            El tamaño se ve.
+            Hace 16 años
             <br />
-            <em>El sabor se queda.</em>
+            <em>hacemos esto a lo grande.</em>
           </h2>
           <p>
-            Cada empanada ronda los 180 gramos. Por eso “Hechas a lo grande”
-            no es solamente una frase: es la forma más directa de contar lo
-            que llega en cada pedido.
+            Cada sabor tiene su propia forma, su relleno y su personalidad.
+            “Hechas a lo grande” no habla de una medida exacta: habla de una
+            manera generosa de hacer las cosas que nos acompaña desde hace 16 años.
           </p>
           <span className="content-pending">
-            Peso aproximado · A confirmar con el cliente
+            16 años de Cosa Nostra
           </span>
         </div>
 
         <div className="product-proof__feature">
-          <div className="product-proof__weight" aria-label="Peso aproximado: 180 gramos">
-            <span>Aproximadamente</span>
-            <strong>180</strong>
-            <em>gramos</em>
+          <div className="product-proof__weight" aria-label="Hace 16 años haciendo Cosa Nostra">
+            <span>Hace</span>
+            <strong>16</strong>
+            <em>años</em>
           </div>
 
           <figure className="product-proof__product">
@@ -313,11 +310,6 @@ function ProductProof() {
                 />
               ))}
             </div>
-
-            <span className="image-review-badge product-proof__image-badge">
-              <strong>Imagen de referencia</strong>
-              A reemplazar por material del cliente
-            </span>
 
             <figcaption key={activeSlide.name} aria-live="polite">
               <strong>Relleno de verdad</strong>
@@ -360,7 +352,7 @@ function FAQSection() {
   return (
     <section className="faq" id="preguntas" aria-labelledby="faq-title">
       <div className="faq__intro">
-        <p className="section-number">05 / ANTES DE PEDIR</p>
+        <p className="section-number">08 / ANTES DE PEDIR</p>
         <p className="eyebrow">Preguntas frecuentes</p>
         <h2 id="faq-title">Todo claro antes del primer bocado.</h2>
         <p>
@@ -450,7 +442,10 @@ function App() {
       '(prefers-reduced-motion: reduce)',
     ).matches
     const sections = root.querySelectorAll(
-      '.product-proof, .branch-showcase, .flavours, .product-gallery, .locations, .faq, .club-teaser',
+      // Instagram y Maps quedan fuera de este ocultamiento inicial porque
+      // dependen de contenido externo. Así nunca aparecen como bloques vacíos
+      // mientras terminan de cargar sus respectivos iframes.
+      '.product-proof, .branch-showcase, .flavours, .product-gallery, .locations, .direct-order, .faq, .club-teaser',
     )
 
     sections.forEach((section) => section.classList.add('scroll-reveal'))
@@ -480,10 +475,25 @@ function App() {
       return () => observer.disconnect()
     }
 
-    const parallaxPanels = root.querySelectorAll(
-      '.branch-showcase__visual',
-    )
+    const parallaxPanels = root.querySelectorAll('.branch-showcase__visual')
+    const hero = root.querySelector('.hero')
+    const productProof = root.querySelector('.product-proof')
+    const gallery = root.querySelector('.product-gallery')
+    const directOrder = root.querySelector('.direct-order')
+    const club = root.querySelector('.club-teaser')
     let frameId = null
+
+    // Convierte la posición de una sección en un progreso de 0 a 1.
+    // Usamos variables CSS para mantener los cálculos livianos y reutilizables.
+    const sceneProgress = (element) => {
+      if (!element) return 0
+      const rect = element.getBoundingClientRect()
+      const totalDistance = window.innerHeight + rect.height
+      return Math.min(
+        Math.max((window.innerHeight - rect.top) / totalDistance, 0),
+        1,
+      )
+    }
 
     const updateScrollEffects = () => {
       frameId = null
@@ -498,6 +508,23 @@ function App() {
         )})`
       }
 
+      if (hero) {
+        const heroProgress = Math.min(
+          Math.max(window.scrollY / Math.max(hero.offsetHeight, 1), 0),
+          1,
+        )
+        hero.style.setProperty('--hero-image-y', `${heroProgress * 18}px`)
+        hero.style.setProperty('--hero-seal-rotate', `${heroProgress * 28}deg`)
+      }
+
+      if (productProof) {
+        const centered = sceneProgress(productProof) - 0.5
+        productProof.style.setProperty('--proof-badge-y', `${centered * -34}px`)
+        productProof.style.setProperty('--proof-photo-y', `${centered * 42}px`)
+        productProof.style.setProperty('--proof-rotate', `${centered * 5}deg`)
+        productProof.style.setProperty('--proof-pattern-y', `${centered * 45}px`)
+      }
+
       parallaxPanels.forEach((panel) => {
         const rect = panel.getBoundingClientRect()
         const distanceFromCenter =
@@ -508,6 +535,31 @@ function App() {
         )
         panel.style.setProperty('--parallax-y', `${movement}px`)
       })
+
+      if (gallery) {
+        const centered = sceneProgress(gallery) - 0.5
+        gallery
+          .querySelectorAll('.product-gallery__card')
+          .forEach((card, index) => {
+            const direction = index % 2 === 0 ? 1 : -1
+            card.style.setProperty(
+              '--gallery-card-y',
+              `${centered * 20 * direction}px`,
+            )
+          })
+      }
+
+      if (directOrder) {
+        const centered = sceneProgress(directOrder) - 0.5
+        directOrder.style.setProperty('--order-mark-x', `${centered * 62}px`)
+        directOrder.style.setProperty('--order-mark-rotate', `${centered * 16}deg`)
+        directOrder.style.setProperty('--order-glow-y', `${centered * -34}px`)
+      }
+
+      if (club) {
+        const centered = sceneProgress(club) - 0.5
+        club.style.setProperty('--club-mark-rotate', `${centered * 18}deg`)
+      }
     }
 
     const requestScrollUpdate = () => {
@@ -530,7 +582,7 @@ function App() {
   const orderLabel = useMemo(
     () =>
       selectedBranch
-        ? `Pedir en ${selectedBranch.name}`
+        ? `Hacer pedido en ${selectedBranch.name}`
         : 'Elegir sucursal',
     [selectedBranch],
   )
@@ -586,14 +638,17 @@ function App() {
           <a href="#sabores" onClick={() => setMenuOpen(false)}>
             Sabores
           </a>
-          <a href="#galeria" onClick={() => setMenuOpen(false)}>
-            Galería
-          </a>
           <a href="#nosotros" onClick={() => setMenuOpen(false)}>
             Nosotros
           </a>
           <a href="#sucursales" onClick={() => setMenuOpen(false)}>
             Sucursales
+          </a>
+          <a href="#resenas" onClick={() => setMenuOpen(false)}>
+            Reseñas
+          </a>
+          <a href="#instagram" onClick={() => setMenuOpen(false)}>
+            Instagram
           </a>
           <a href="#club" onClick={() => setMenuOpen(false)}>
             Club
@@ -611,13 +666,13 @@ function App() {
           </button>
 
           <a
-            className="button button--small"
+            className="button button--small button--header-order"
             href={selectedBranch?.orderUrl ?? '#sucursales'}
             target={selectedBranch ? '_blank' : undefined}
             rel="noopener noreferrer"
             onClick={handleOrder}
           >
-            Pedir ahora
+            Hacer pedido
           </a>
 
           <button
@@ -710,11 +765,11 @@ function App() {
 
         </section>
 
-        {/* NUESTRA DIFERENCIA: SELLO DE PESO + FOTO REAL DE PRODUCTO */}
+        {/* NUESTRA DIFERENCIA: 16 AÑOS + RELLENOS ROTATIVOS */}
         <ProductProof />
 
         {/* SUCURSAL DESTACADA: CAMBIA SEGÚN LA ELECCIÓN DEL USUARIO */}
-        <section className="branch-showcase" aria-labelledby="branch-showcase-title">
+        <section className="branch-showcase" id="pedidos" aria-labelledby="branch-showcase-title">
           <div className="branch-showcase__visual">
             <img
               key={displayedBranch.id}
@@ -725,11 +780,6 @@ function App() {
               loading="lazy"
               decoding="async"
             />
-
-            <span className="image-review-badge">
-              <strong>Imagen de referencia</strong>
-              A validar con cada sucursal
-            </span>
 
             <span className="branch-showcase__index" aria-hidden="true">
               {String(branches.findIndex((branch) => branch.id === displayedBranch.id) + 1).padStart(2, '0')}
@@ -751,15 +801,28 @@ function App() {
               entrega y las opciones de retiro de esta sucursal.
             </p>
 
-            <div className="branch-showcase__actions">
+            <div className="order-channels" aria-label={`Pedido directo en ${displayedBranch.name}`}>
               <a
-                className="button button--branch"
+                className="order-channel order-channel--direct"
                 href={displayedBranch.orderUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Pedir en {displayedBranch.name}
-                <ArrowIcon />
+                <span>
+                  <small>Compra online de la sucursal</small>
+                  <strong>Ver menú y hacer pedido</strong>
+                </span>
+                <span className="order-channel__arrow"><ArrowIcon /></span>
+              </a>
+
+            </div>
+
+            <div className="branch-showcase__actions">
+              <a
+                className="text-button text-button--light"
+                href="#resenas"
+              >
+                Ver mapa y dejar reseña
               </a>
 
               <a
@@ -795,6 +858,12 @@ function App() {
             </div>
           </div>
         </section>
+
+        {/* MAPA Y RESEÑAS: VISIBLES JUNTO A LA SUCURSAL ELEGIDA */}
+        <BranchMapReview branch={displayedBranch} />
+
+        {/* INSTAGRAM: PERFIL OFICIAL ASOCIADO A LA SUCURSAL ACTIVA */}
+        <BranchSocial branch={displayedBranch} onChoose={chooseBranch} />
 
         {/* CATEGORÍAS DEL MENÚ */}
         <section className="flavours" id="sabores">
@@ -836,9 +905,6 @@ function App() {
                 <span className="product-card__overlay" aria-hidden="true" />
 
                 <span className="product-card__number">{group.number}</span>
-                <span className="product-card__badge">
-                  Imagen de referencia
-                </span>
                 <h3>{group.title}</h3>
                 <p>{group.detail}</p>
 
@@ -862,7 +928,7 @@ function App() {
         {/* SUCURSALES */}
         <section className="locations" id="sucursales">
           <div className="locations__intro">
-            <p className="section-number">04 / CERCA TUYO</p>
+            <p className="section-number">06 / CERCA TUYO</p>
             <p className="eyebrow">Cuatro sucursales</p>
             <h2>Siempre hay un Cosa Nostra cerca.</h2>
             <p>
@@ -892,7 +958,6 @@ function App() {
                       loading="lazy"
                       decoding="async"
                     />
-                    <small>Imagen de referencia</small>
                   </span>
 
                   <span className="location-list__number">
@@ -919,10 +984,65 @@ function App() {
           </div>
         </section>
 
+        {/* CTA PRINCIPAL: LLEVA AL PEDIDO DIRECTO DE LA SUCURSAL ELEGIDA */}
+        <section className="direct-order" id="pedido-directo" aria-labelledby="direct-order-title">
+          <div className="direct-order__glow" aria-hidden="true" />
+
+          <div className="direct-order__mark" aria-hidden="true">
+            <img
+              src="/assets/brand/cosa-nostra-monograma.png"
+              alt=""
+              width="2048"
+              height="2048"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+
+          <div className="direct-order__copy">
+            <p className="section-number">07 / PEDIDO DIRECTO</p>
+            <p className="eyebrow eyebrow--light">Sin vueltas, directo a tu sucursal</p>
+            <h2 id="direct-order-title">
+              {selectedBranch ? (
+                <>
+                  Tu pedido sale de <em>{selectedBranch.name}.</em>
+                </>
+              ) : (
+                <>
+                  Elegí tu sucursal y <em>pedí al instante.</em>
+                </>
+              )}
+            </h2>
+            <p>
+              Entrá al menú online, revisá los productos disponibles y armá tu
+              pedido directamente con el local que elegiste.
+            </p>
+          </div>
+
+          <div className="direct-order__action">
+            <span>
+              {selectedBranch
+                ? `Sucursal seleccionada · ${selectedBranch.name}`
+                : 'Primero elegí tu sucursal'}
+            </span>
+            <a
+              className="direct-order__button"
+              href={selectedBranch?.orderUrl ?? '#sucursales'}
+              target={selectedBranch ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              onClick={handleOrder}
+            >
+              <strong>{orderLabel}</strong>
+              <i><ArrowIcon /></i>
+            </a>
+            <small>Acceso al Pedido Directo oficial de la sucursal</small>
+          </div>
+        </section>
+
         {/* PREGUNTAS FRECUENTES: CONTENIDO ÚTIL PARA USUARIOS Y BÚSQUEDAS LOCALES */}
         <FAQSection />
 
-        {/* CLUB DE COSA NOSTRA */}
+        {/* CLUB DE COSA NOSTRA: SE MANTIENE COMO PRÓXIMAMENTE EN LA FASE 1 */}
         <section className="club-teaser" id="club">
           <div className="club-teaser__mark" aria-hidden="true">
             <img
@@ -939,7 +1059,7 @@ function App() {
             <p className="eyebrow">Club de Cosa Nostra</p>
             <h2>Bienvenidos a la familia.</h2>
             <span className="content-pending">
-              Beneficios e inscripción a confirmar con el cliente
+              Lanzamiento próximamente
             </span>
           </div>
 
@@ -966,8 +1086,9 @@ function App() {
         <div className="footer-links">
           <a href="#sabores">Sabores</a>
           <a href="#nosotros">Nosotros</a>
+          <a href="#resenas">Reseñas</a>
           <a
-            href="https://www.instagram.com/cosanostra.empanadas/"
+            href="https://www.instagram.com/cosanostraempanadas/"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -978,9 +1099,9 @@ function App() {
             Sucursales
           </button>
 
-          <span className="footer-jobs" title="Canal de recepción a confirmar">
-            Trabajá con nosotros · Próximamente
-          </span>
+          <a className="footer-jobs" href="/trabaja-con-nosotros">
+            Trabajá con nosotros
+          </a>
         </div>
 
         <small className="footer-meta">
@@ -1002,17 +1123,6 @@ function App() {
         </small>
       </footer>
 
-      {/* BOTÓN FIJO EN CELULARES */}
-      <a
-        className="mobile-order"
-        href={selectedBranch?.orderUrl ?? '#sucursales'}
-        target={selectedBranch ? '_blank' : undefined}
-        rel="noopener noreferrer"
-        onClick={handleOrder}
-      >
-        <span>{orderLabel}</span>
-        <ArrowIcon />
-      </a>
     </div>
   )
 }

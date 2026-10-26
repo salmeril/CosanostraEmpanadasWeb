@@ -10,13 +10,14 @@ export const productGroups = [
     number: '02',
     title: 'Pizzas',
     detail: 'Muzzarella, especiales y sabores para compartir.',
-    // Imagen pública del menú actual. Sigue marcada como referencia en la interfaz.
-    image: 'https://pedidodirecto.ar/assets/Pizza16910702240633.png',
-    position: '50% 50%',
+    // Foto real publicada por la cuenta oficial. Sigue marcada como referencia
+    // hasta que el cliente confirme el material definitivo de esta sección.
+    image: '/assets/products/pizza-cosa-nostra-real.jpg',
+    position: '50% 64%',
   },
   {
     number: '03',
-    title: 'Las gourmet',
+    title: 'Empanadas gourmet',
     detail: 'Combinaciones intensas que llevan la empanada un paso más allá.',
     image: '/assets/products/matambre-a-la-pizza.webp',
     position: '50% 58%',

@@ -5,7 +5,7 @@
 >
   <url>
     <loc>https://cosanostraempanadas.com.ar/</loc>
-    <lastmod>2026-10-09</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -24,5 +24,11 @@
       <image:loc>https://cosanostraempanadas.com.ar/assets/products/germana.webp</image:loc>
       <image:title>Empanada Cosa Nostra Germana</image:title>
     </image:image>
+  </url>
+  <url>
+    <loc>https://cosanostraempanadas.com.ar/trabaja-con-nosotros</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>

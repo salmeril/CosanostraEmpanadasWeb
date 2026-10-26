@@ -39,11 +39,6 @@ export default function HeroCarousel() {
         ))}
       </div>
 
-      <span className="image-review-badge image-review-badge--hero">
-        <strong>Imagen de referencia</strong>
-        Pendiente de reemplazo por material del cliente
-      </span>
-
       <div className="hero-carousel__controls">
         <button type="button" onClick={() => move(-1)} aria-label="Imagen anterior">←</button>
 

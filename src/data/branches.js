@@ -9,6 +9,7 @@ export const branches = [
     orderUrl: 'https://pedidodirecto.ar/lacosanostramaritimo',
     mapUrl: 'https://maps.app.goo.gl/2NcWfBfvjrfes8LX9',
     instagramUrl: 'https://www.instagram.com/lacosanostra.maritimo/',
+    instagramHandle: '@lacosanostra.maritimo',
   },
   {
     id: 'ranelagh',
@@ -19,7 +20,8 @@ export const branches = [
     image: '/assets/branches/ranelagh.webp',
     orderUrl: 'https://pedidodirecto.ar/lacosanostraranelagh',
     mapUrl: 'https://maps.app.goo.gl/n1rHymLQ57tw6EZw9',
-    instagramUrl: 'https://www.instagram.com/lacosanostra.ranelagh/',
+    instagramUrl: 'https://www.instagram.com/cosanostraempanadas/',
+    instagramHandle: '@cosanostraempanadas',
   },
   {
     id: 'berazategui',
@@ -30,7 +32,8 @@ export const branches = [
     image: '/assets/branches/berazategui.webp',
     orderUrl: 'https://pedidodirecto.app/cosanostraberazategui',
     mapUrl: 'https://maps.app.goo.gl/DEKQLrcrMKhfprMCA',
-    instagramUrl: 'https://www.instagram.com/cosanostra.empanadas/',
+    instagramUrl: 'https://www.instagram.com/cosanostraempanadas/',
+    instagramHandle: '@cosanostraempanadas',
   },
   {
     id: 'quilmes',
@@ -41,5 +44,7 @@ export const branches = [
     image: '/assets/branches/quilmes.webp',
     orderUrl: 'https://pedidodirecto.app/cosanostraquilmes',
     mapUrl: 'https://maps.app.goo.gl/Hu8aBWzB71pNgk1N9',
+    instagramUrl: 'https://www.instagram.com/cosanostraempanadas/',
+    instagramHandle: '@cosanostraempanadas',
   },
 ]

@@ -27,7 +27,7 @@ export default function ProductGallery() {
     <section className="product-gallery" id="galeria" aria-labelledby="gallery-title">
       <div className="product-gallery__heading">
         <div>
-          <p className="section-number">03 / SABORES EN PRIMER PLANO</p>
+          <p className="section-number">05 / SABORES EN PRIMER PLANO</p>
           <p className="eyebrow">Una recorrida por la carta</p>
           <h2 id="gallery-title">Relleno que se ve. Sabor que se recuerda.</h2>
         </div>
@@ -43,8 +43,8 @@ export default function ProductGallery() {
       </div>
 
       <p className="product-gallery__intro">
-        Una selección del material disponible para mostrar el producto como protagonista.
-        Los nombres y las fotos quedan listos para la validación final del cliente.
+        Un recorrido por algunos de nuestros sabores. Miralos de cerca y elegí
+        cuál va a ser el próximo en llegar a tu mesa.
       </p>
 
       <div className="product-gallery__track" ref={trackRef}>
@@ -59,7 +59,6 @@ export default function ProductGallery() {
                 loading="lazy"
                 decoding="async"
               />
-              <span>Imagen de referencia · A revisar</span>
             </div>
 
             <figcaption>
