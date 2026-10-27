@@ -107,6 +107,7 @@ function getWhatsAppUrl(branch, purpose = 'order') {
 
 function WhatsAppFloat({ branch }) {
   const [promptVisible, setPromptVisible] = useState(false)
+  const [footerVisible, setFooterVisible] = useState(false)
 
   useEffect(() => {
     if (!branch) return undefined
@@ -129,13 +130,31 @@ function WhatsAppFloat({ branch }) {
     }
   }, [branch])
 
+  useEffect(() => {
+    const footer = document.querySelector('footer')
+
+    if (!footer || !('IntersectionObserver' in window)) return undefined
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+      { threshold: 0.02 },
+    )
+
+    observer.observe(footer)
+
+    return () => observer.disconnect()
+  }, [])
+
   if (!branch) return null
 
   return (
-    <aside className="whatsapp-float" aria-label={`WhatsApp de ${branch.name}`}>
+    <aside
+      className={`whatsapp-float ${footerVisible ? 'is-footer-visible' : ''}`}
+      aria-label={`WhatsApp de ${branch.name}`}
+    >
       <div
-        className={`whatsapp-float__prompt ${promptVisible ? 'is-visible' : ''}`}
-        aria-hidden={!promptVisible}
+        className={`whatsapp-float__prompt ${promptVisible && !footerVisible ? 'is-visible' : ''}`}
+        aria-hidden={!promptVisible || footerVisible}
       >
         <span>Tu pedido, más fácil</span>
         <strong>Pedí por WhatsApp por acá</strong>
@@ -148,6 +167,7 @@ function WhatsAppFloat({ branch }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Hacer un pedido por WhatsApp en ${branch.name}`}
+        onPointerDown={() => setPromptVisible(false)}
         onClick={() =>
           trackEvent('whatsapp_order_click', {
             branch_id: branch.id,

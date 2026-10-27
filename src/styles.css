@@ -398,15 +398,20 @@ footer small { grid-column: 1 / -1; display: flex; align-items: center; justify-
 .footer-credit:hover, .footer-credit:focus-visible { color: var(--cream); }
 
 /* Acceso persistente a WhatsApp: cambia junto con la sucursal elegida */
-.whatsapp-float { position: fixed; z-index: 88; right: 1.25rem; bottom: 1.25rem; display: flex; align-items: flex-end; flex-direction: column; gap: .65rem; }
+.whatsapp-float { position: fixed; z-index: 88; right: 1.25rem; bottom: 1.25rem; display: flex; align-items: flex-end; flex-direction: column; gap: .65rem; transition: opacity .25s ease, transform .25s ease, visibility .25s ease; }
+.whatsapp-float.is-footer-visible { opacity: 0; pointer-events: none; transform: translateY(1rem); visibility: hidden; }
 .whatsapp-float__prompt { width: max-content; max-width: min(22rem, calc(100vw - 2rem)); border: 2px solid rgba(37,211,102,.34); background: var(--cream); color: var(--green-dark); opacity: 0; padding: 1rem 1.15rem; box-shadow: 0 1rem 3rem rgba(5,22,16,.24); pointer-events: none; transform: translateY(.65rem) scale(.96); transform-origin: right bottom; transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1); }
-.whatsapp-float__prompt.is-visible, .whatsapp-float:focus-within .whatsapp-float__prompt, .whatsapp-float:hover .whatsapp-float__prompt { opacity: 1; transform: translateY(0) scale(1); animation: whatsappPromptAttention 4.8s cubic-bezier(.2,.75,.25,1) both; }
+.whatsapp-float__prompt.is-visible { opacity: 1; transform: translateY(0) scale(1); animation: whatsappPromptAttention 4.8s cubic-bezier(.2,.75,.25,1) both; }
+@media (hover: hover) and (pointer: fine) {
+  .whatsapp-float:focus-within .whatsapp-float__prompt,
+  .whatsapp-float:hover .whatsapp-float__prompt { opacity: 1; transform: translateY(0) scale(1); animation: whatsappPromptAttention 4.8s cubic-bezier(.2,.75,.25,1) both; }
+}
 .whatsapp-float__prompt span, .whatsapp-float__prompt strong, .whatsapp-float__prompt small { display: block; }
 .whatsapp-float__prompt span { color: var(--muted); font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 .whatsapp-float__prompt strong { margin-top: .25rem; font-family: var(--font-display); font-size: 1.55rem; letter-spacing: -.03em; line-height: 1.02; }
 .whatsapp-float__prompt small { margin-top: .38rem; color: #168f49; font-size: .63rem; font-weight: 700; }
 @keyframes whatsappPromptAttention { 0% { opacity: 0; transform: translateY(.8rem) scale(.94); } 12% { opacity: 1; transform: translateY(-.12rem) scale(1.025); } 20%, 88% { transform: translateY(0) scale(1); } 100% { opacity: 1; } }
-.whatsapp-float__button { display: inline-flex; width: 3.9rem; height: 3.9rem; min-height: 0; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,.9); border-radius: 50%; background: #25d366; color: #fff; padding: 0; box-shadow: 0 1rem 2.5rem rgba(5,22,16,.28); animation: whatsappFloatPulse 3.2s ease-in-out infinite; transition: background .25s ease, transform .25s ease; }
+.whatsapp-float__button { display: inline-flex; width: 3.9rem; height: 3.9rem; min-height: 0; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,.9); border-radius: 50%; background: #25d366; color: #fff; padding: 0; box-shadow: 0 1rem 2.5rem rgba(5,22,16,.28); animation: whatsappFloatPulse 3.2s ease-in-out infinite; touch-action: manipulation; transition: background .25s ease, transform .25s ease; }
 .whatsapp-float__button:hover { background: #128c4a; transform: translateY(-3px); }
 .whatsapp-float__button svg { width: 1.7rem; height: 1.7rem; flex: 0 0 auto; }
 .whatsapp-float__button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }

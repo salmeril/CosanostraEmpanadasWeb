@@ -1,8 +1,8 @@
-# Cosa Nostra — V28 · Imágenes finales y cierre de fase
+# Cosa Nostra — V30 · WhatsApp móvil y footer corregidos
 
 Landing de Cosa Nostra Empanadas desarrollada con React y Vite. Esta versión
 incluye el diseño interactivo aprobado, carruseles de producto, selección de
-sucursal y una base SEO técnica, on-page y local lista para publicar. Esta V28
+sucursal y una base SEO técnica, on-page y local lista para publicar. Esta V29
 cierra la primera fase con el contenido solicitado: 16 años de historia, una
 referencia secundaria de aproximadamente 180 g, “Empanadas gourmet”, feed
 público de Instagram, mapa y acceso a reseñas de Google por sucursal, además de
@@ -22,7 +22,11 @@ del local activo. Las reservas para cenas show, eventos y pizza libre de B.
 Marítimo ahora tienen una sección propia inmediatamente después de Instagram.
 La sucursal Ranelagh utiliza la nueva imagen nocturna entregada por el cliente
 y la sección de reservas de Marítimo incorpora una escena real de una noche
-especial tomada de su perfil oficial.
+especial tomada de su perfil oficial, mejorada con IA para recuperar detalle y
+evitar el pixelado de la miniatura original. La V30 corrige la interacción del
+botón flotante de WhatsApp en pantallas táctiles: el primer toque abre el chat
+sin quedar atrapado en el aviso. Además, el flotante se oculta suavemente al
+entrar al footer para no tapar “Trabajá con nosotros” ni otros enlaces.
 
 ## Ejecutar el proyecto
 
