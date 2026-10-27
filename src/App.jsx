@@ -7,7 +7,7 @@ import BranchMapReview from './components/BranchMapReview.jsx'
 import ProductGallery from './components/ProductGallery.jsx'
 import SpotlightCard from './components/SpotlightCard.jsx'
 import BrandMark from './components/ui/BrandMark.jsx'
-import { ArrowIcon, LocationIcon } from './components/ui/Icons.jsx'
+import { ArrowIcon, LocationIcon, WhatsAppIcon } from './components/ui/Icons.jsx'
 import { trackEvent } from './lib/analytics.js'
 
 import { branches } from './data/branches.js'
@@ -90,9 +90,143 @@ const faqItems = [
   {
     question: '¿Puedo pedir delivery o retirar?',
     answer:
-      'Las opciones de entrega y retiro se informan al ingresar al menú online de la sucursal elegida.',
+      'Las opciones de entrega y retiro se informan al ingresar al menú online. También podés consultar directamente por WhatsApp con la sucursal elegida.',
   },
 ]
+
+function getWhatsAppUrl(branch, purpose = 'order') {
+  if (!branch?.whatsappNumber) return '#sucursales'
+
+  const message =
+    purpose === 'reservation'
+      ? 'Hola, quiero consultar por una reserva para una cena show, evento o pizza libre en Cosa Nostra B. Marítimo.'
+      : `Hola, quiero hacer un pedido en Cosa Nostra ${branch.name}.`
+
+  return `https://wa.me/${branch.whatsappNumber}?text=${encodeURIComponent(message)}`
+}
+
+function WhatsAppFloat({ branch }) {
+  const [promptVisible, setPromptVisible] = useState(false)
+
+  useEffect(() => {
+    if (!branch) return undefined
+
+    let hideTimer = null
+
+    const showPrompt = () => {
+      setPromptVisible(true)
+      hideTimer = window.setTimeout(() => setPromptVisible(false), 4800)
+    }
+
+    setPromptVisible(false)
+    const initialTimer = window.setTimeout(showPrompt, 2800)
+    const repeatTimer = window.setInterval(showPrompt, 15000)
+
+    return () => {
+      window.clearTimeout(initialTimer)
+      window.clearInterval(repeatTimer)
+      if (hideTimer) window.clearTimeout(hideTimer)
+    }
+  }, [branch])
+
+  if (!branch) return null
+
+  return (
+    <aside className="whatsapp-float" aria-label={`WhatsApp de ${branch.name}`}>
+      <div
+        className={`whatsapp-float__prompt ${promptVisible ? 'is-visible' : ''}`}
+        aria-hidden={!promptVisible}
+      >
+        <span>Tu pedido, más fácil</span>
+        <strong>Pedí por WhatsApp por acá</strong>
+        <small>Te responde {branch.name}</small>
+      </div>
+
+      <a
+        className="whatsapp-float__button"
+        href={getWhatsAppUrl(branch)}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Hacer un pedido por WhatsApp en ${branch.name}`}
+        onClick={() =>
+          trackEvent('whatsapp_order_click', {
+            branch_id: branch.id,
+            branch_name: branch.name,
+            placement: 'floating_button',
+          })
+        }
+      >
+        <WhatsAppIcon />
+        <span>WhatsApp</span>
+      </a>
+    </aside>
+  )
+}
+
+function MaritimoEvents({ branch }) {
+  if (branch.id !== 'maritimo') return null
+
+  return (
+    <section
+      className="maritimo-events"
+      id="reservas-maritimo"
+      aria-labelledby="maritimo-events-title"
+    >
+      <div className="maritimo-events__visual">
+        <img
+          src={branch.eventsImage || branch.image}
+          alt={branch.eventsImageAlt || 'Noche especial en Cosa Nostra B. Marítimo'}
+          width="1080"
+          height="1080"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div className="maritimo-events__labels" aria-hidden="true">
+          <span>Cenas show</span>
+          <span>Pizza libre</span>
+          <span>Eventos</span>
+        </div>
+      </div>
+
+      <div className="maritimo-events__content">
+        <p className="section-number">EXPERIENCIAS EN MARÍTIMO</p>
+        <p className="eyebrow eyebrow--light">Eventos y reservas</p>
+        <h2 id="maritimo-events-title">
+          Tu próxima noche
+          <br />
+          <em>puede empezar acá.</em>
+        </h2>
+        <p>
+          En B. Marítimo también podés disfrutar cenas show, eventos y fechas
+          especiales de pizza libre. Consultá la agenda y reservá tu mesa
+          directamente con el local.
+        </p>
+
+        <a
+          className="maritimo-events__button"
+          href={getWhatsAppUrl(branch, 'reservation')}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() =>
+            trackEvent('whatsapp_reservation_click', {
+              branch_id: branch.id,
+              branch_name: branch.name,
+              placement: 'maritimo_events_section',
+            })
+          }
+        >
+          <WhatsAppIcon />
+          <span>
+            <small>Consultá fechas y disponibilidad</small>
+            <strong>Reservar por WhatsApp</strong>
+          </span>
+          <ArrowIcon />
+        </a>
+      </div>
+    </section>
+  )
+}
 
 
 /**
@@ -801,7 +935,7 @@ function App() {
               entrega y las opciones de retiro de esta sucursal.
             </p>
 
-            <div className="order-channels" aria-label={`Pedido directo en ${displayedBranch.name}`}>
+            <div className="order-channels" aria-label={`Canales de pedido en ${displayedBranch.name}`}>
               <a
                 className="order-channel order-channel--direct"
                 href={displayedBranch.orderUrl}
@@ -813,6 +947,27 @@ function App() {
                   <strong>Ver menú y hacer pedido</strong>
                 </span>
                 <span className="order-channel__arrow"><ArrowIcon /></span>
+              </a>
+
+              <a
+                className="order-channel order-channel--whatsapp"
+                href={getWhatsAppUrl(displayedBranch)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  trackEvent('whatsapp_order_click', {
+                    branch_id: displayedBranch.id,
+                    branch_name: displayedBranch.name,
+                    placement: 'branch_showcase',
+                  })
+                }
+              >
+                <span>
+                  <small>Consulta directa con el local</small>
+                  <strong>Pedir por WhatsApp</strong>
+                  <em>{displayedBranch.whatsappDisplay}</em>
+                </span>
+                <span className="order-channel__arrow"><WhatsAppIcon /></span>
               </a>
 
             </div>
@@ -864,6 +1019,9 @@ function App() {
 
         {/* INSTAGRAM: PERFIL OFICIAL ASOCIADO A LA SUCURSAL ACTIVA */}
         <BranchSocial branch={displayedBranch} onChoose={chooseBranch} />
+
+        {/* EVENTOS: SECCIÓN EXCLUSIVA DE LA EXPERIENCIA EN B. MARÍTIMO */}
+        <MaritimoEvents branch={displayedBranch} />
 
         {/* CATEGORÍAS DEL MENÚ */}
         <section className="flavours" id="sabores">
@@ -1122,6 +1280,8 @@ function App() {
           </a>
         </small>
       </footer>
+
+      <WhatsAppFloat branch={selectedBranch} />
 
     </div>
   )

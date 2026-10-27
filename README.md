@@ -1,8 +1,8 @@
-# Cosa Nostra — V25 · cierre de la primera fase
+# Cosa Nostra — V28 · Imágenes finales y cierre de fase
 
 Landing de Cosa Nostra Empanadas desarrollada con React y Vite. Esta versión
 incluye el diseño interactivo aprobado, carruseles de producto, selección de
-sucursal y una base SEO técnica, on-page y local lista para publicar. Esta V25
+sucursal y una base SEO técnica, on-page y local lista para publicar. Esta V28
 cierra la primera fase con el contenido solicitado: 16 años de historia, una
 referencia secundaria de aproximadamente 180 g, “Empanadas gourmet”, feed
 público de Instagram, mapa y acceso a reseñas de Google por sucursal, además de
@@ -16,6 +16,13 @@ Los textos visibles ya están redactados exclusivamente para el público: no
 quedan notas de validación, instrucciones internas ni aclaraciones del proyecto.
 La portada de “Trabajá con nosotros” utiliza una imagen actual del equipo en la
 sucursal de Quilmes, en reemplazo de la antigua fachada de Ranelagh.
+También incorpora WhatsApp dinámico por sucursal: botón flotante con aviso
+animado y reforzado, sin agrandar el ícono circular, y acceso dentro del bloque
+del local activo. Las reservas para cenas show, eventos y pizza libre de B.
+Marítimo ahora tienen una sección propia inmediatamente después de Instagram.
+La sucursal Ranelagh utiliza la nueva imagen nocturna entregada por el cliente
+y la sección de reservas de Marítimo incorpora una escena real de una noche
+especial tomada de su perfil oficial.
 
 ## Ejecutar el proyecto
 
@@ -69,7 +76,7 @@ que volver a ejecutar `npm run build`.
 
 ## Contenido editable
 
-- Sucursales, direcciones, Maps, Instagram y Pedido Directo:
+- Sucursales, direcciones, Maps, Instagram, WhatsApp y Pedido Directo:
   `src/data/branches.js`
 - Feed público de Instagram por sucursal: `src/components/BranchSocial.jsx`
 - Mapa y reseñas por sucursal: `src/components/BranchMapReview.jsx`

@@ -112,7 +112,7 @@ svg { width: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; strok
 .hero-carousel__slide::after { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,31,24,.2), transparent 45%, rgba(10,31,24,.6)); content: ''; }
 .hero-carousel__slide img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.88) contrast(1.02); transform: translate3d(0, var(--hero-image-y, 0), 0) scale(1.075); transition: transform .18s linear; will-change: transform; }
 .hero-carousel__slide figcaption { position: absolute; z-index: 2; bottom: 2.1rem; left: 2rem; isolation: isolate; border: 1px solid rgba(255,255,255,.32); background: rgba(13,43,33,.88); color: var(--cream); font-size: .68rem; font-weight: 700; letter-spacing: .11em; padding: .55rem .7rem; text-transform: uppercase; }
-.hero-carousel__controls { position: absolute; z-index: 4; right: 1.8rem; bottom: 1.5rem; display: flex; align-items: center; gap: .65rem; }
+.hero-carousel__controls { position: absolute; z-index: 4; right: 5.8rem; bottom: 1.5rem; display: flex; align-items: center; gap: .65rem; }
 .hero-carousel__controls > button { display: grid; width: 2.65rem; height: 2.65rem; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(11,35,27,.25); color: var(--cream); cursor: pointer; }
 .hero-carousel__dots { display: flex; gap: .32rem; }
 .hero-carousel__dots button { width: .45rem; height: .45rem; border: 0; border-radius: 999px; background: rgba(255,255,255,.45); cursor: pointer; padding: 0; transition: width .3s ease, background .3s ease; }
@@ -191,6 +191,12 @@ svg { width: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; strok
 .order-channel--direct { min-height: 7.2rem; background: var(--cream); color: var(--green-dark); box-shadow: 0 1.2rem 3rem rgba(5,20,15,.18); }
 .order-channel--direct strong { font-size: clamp(1.65rem, 2.55vw, 2.5rem); }
 .order-channel--direct .order-channel__arrow { width: 3.25rem; background: var(--green); color: var(--cream); animation: directArrowPulse 2.4s ease-in-out infinite; }
+.order-channel--whatsapp { border-color: rgba(91,224,131,.55); background: rgba(6,31,23,.38); }
+.order-channel--whatsapp:hover { border-color: #5be083; background: rgba(6,31,23,.68); }
+.order-channel--whatsapp em { display: block; margin-top: .3rem; color: rgba(251,245,234,.62); font-size: .67rem; font-style: normal; letter-spacing: .05em; }
+.order-channel--whatsapp .order-channel__arrow { border-color: #5be083; background: #25d366; color: #fff; }
+.order-channel--whatsapp .order-channel__arrow svg { width: 1.35rem; }
+
 @keyframes directArrowPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(24,63,49,.2); transform: translateX(0); } 50% { box-shadow: 0 0 0 .55rem rgba(24,63,49,0); transform: translateX(.16rem); } }
 .branch-showcase__selector { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 3rem; border-top: 1px solid rgba(251,245,234,.2); border-left: 1px solid rgba(251,245,234,.2); }
 .branch-showcase__selector button { min-width: 0; border: 0; border-right: 1px solid rgba(251,245,234,.2); border-bottom: 1px solid rgba(251,245,234,.2); background: transparent; color: rgba(251,245,234,.58); cursor: pointer; padding: .85rem 1rem; text-align: left; transition: background .25s ease, color .25s ease; }
@@ -266,6 +272,30 @@ svg { width: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; strok
 .branch-social__empty { display: grid; min-height: 40rem; place-content: center; background: var(--cream); color: var(--green); padding: 2rem; text-align: center; }
 .branch-social__empty strong { font-family: var(--font-display); font-size: 2.2rem; }
 .branch-social__note { max-width: 48rem; margin: 1.5rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.7; }
+
+/* Agenda y reservas: sección exclusiva de B. Marítimo, debajo de Instagram */
+.maritimo-events { display: grid; min-height: 36rem; grid-template-columns: minmax(0, .92fr) minmax(24rem, 1.08fr); background: var(--mustard); color: var(--green-dark); animation: maritimoEventsIn .7s cubic-bezier(.2,.75,.25,1) both; }
+@keyframes maritimoEventsIn { from { opacity: 0; transform: translateY(1rem); } }
+.maritimo-events__visual { position: relative; min-height: 36rem; overflow: hidden; background: var(--green-dark); }
+.maritimo-events__visual::after { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,22,16,.08), rgba(5,22,16,.68)); content: ''; }
+.maritimo-events__visual img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.025); }
+.maritimo-events__labels { position: absolute; z-index: 2; right: 1.5rem; bottom: 1.5rem; left: 1.5rem; display: flex; flex-wrap: wrap; gap: .6rem; }
+.maritimo-events__labels span { border: 1px solid rgba(251,245,234,.58); border-radius: 999px; background: rgba(13,43,33,.62); color: var(--cream); font-size: .58rem; font-weight: 700; letter-spacing: .08em; padding: .65rem .8rem; text-transform: uppercase; backdrop-filter: blur(8px); }
+.maritimo-events__content { display: flex; min-width: 0; flex-direction: column; justify-content: center; padding: clamp(3.5rem, 6vw, 6rem) clamp(1.5rem, 5vw, 5.5rem); }
+.maritimo-events .section-number { color: rgba(13,43,33,.5); }
+.maritimo-events .eyebrow { color: var(--green-dark); }
+.maritimo-events h2 { max-width: 11ch; margin: 0; font-family: var(--font-display); font-size: clamp(3rem, 5.2vw, 5.8rem); font-weight: 700; letter-spacing: -.06em; line-height: .9; }
+.maritimo-events h2 em { color: var(--cream); font-weight: 700; }
+.maritimo-events__content > p:not(.section-number):not(.eyebrow) { max-width: 38rem; margin: 1.6rem 0 0; line-height: 1.75; }
+.maritimo-events__button { display: flex; width: min(34rem, 100%); min-height: 5.8rem; align-items: center; gap: 1rem; margin-top: 2rem; background: var(--green-dark); color: var(--cream); padding: 1rem 1.2rem; box-shadow: 0 1.2rem 3rem rgba(5,22,16,.2); transition: background .25s ease, color .25s ease, transform .25s ease; }
+.maritimo-events__button:hover { background: var(--cream); color: var(--green-dark); transform: translateY(-3px); }
+.maritimo-events__button > svg:first-child { width: 1.9rem; flex: 0 0 auto; color: #5be083; }
+.maritimo-events__button > svg:last-child { width: 1.3rem; flex: 0 0 auto; margin-left: auto; }
+.maritimo-events__button span, .maritimo-events__button small, .maritimo-events__button strong { display: block; }
+.maritimo-events__button span { min-width: 0; }
+.maritimo-events__button small { margin-bottom: .22rem; color: rgba(251,245,234,.58); font-size: .55rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.maritimo-events__button:hover small { color: rgba(13,43,33,.62); }
+.maritimo-events__button strong { font-family: var(--font-display); font-size: clamp(1.45rem, 2.15vw, 2.2rem); letter-spacing: -.035em; }
 
 /* Sucursales */
 .locations { display: grid; grid-template-columns: minmax(18rem, .8fr) 1.35fr; gap: clamp(3rem, 7vw, 8rem); padding: clamp(5rem, 9vw, 9rem) clamp(1.2rem, 5vw, 5.5rem); }
@@ -366,6 +396,21 @@ footer small { grid-column: 1 / -1; display: flex; align-items: center; justify-
 .footer-credit { color: rgba(249,238,227,.56); transition: color .25s ease; }
 .footer-credit strong { color: var(--mustard); font-weight: 700; }
 .footer-credit:hover, .footer-credit:focus-visible { color: var(--cream); }
+
+/* Acceso persistente a WhatsApp: cambia junto con la sucursal elegida */
+.whatsapp-float { position: fixed; z-index: 88; right: 1.25rem; bottom: 1.25rem; display: flex; align-items: flex-end; flex-direction: column; gap: .65rem; }
+.whatsapp-float__prompt { width: max-content; max-width: min(22rem, calc(100vw - 2rem)); border: 2px solid rgba(37,211,102,.34); background: var(--cream); color: var(--green-dark); opacity: 0; padding: 1rem 1.15rem; box-shadow: 0 1rem 3rem rgba(5,22,16,.24); pointer-events: none; transform: translateY(.65rem) scale(.96); transform-origin: right bottom; transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1); }
+.whatsapp-float__prompt.is-visible, .whatsapp-float:focus-within .whatsapp-float__prompt, .whatsapp-float:hover .whatsapp-float__prompt { opacity: 1; transform: translateY(0) scale(1); animation: whatsappPromptAttention 4.8s cubic-bezier(.2,.75,.25,1) both; }
+.whatsapp-float__prompt span, .whatsapp-float__prompt strong, .whatsapp-float__prompt small { display: block; }
+.whatsapp-float__prompt span { color: var(--muted); font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.whatsapp-float__prompt strong { margin-top: .25rem; font-family: var(--font-display); font-size: 1.55rem; letter-spacing: -.03em; line-height: 1.02; }
+.whatsapp-float__prompt small { margin-top: .38rem; color: #168f49; font-size: .63rem; font-weight: 700; }
+@keyframes whatsappPromptAttention { 0% { opacity: 0; transform: translateY(.8rem) scale(.94); } 12% { opacity: 1; transform: translateY(-.12rem) scale(1.025); } 20%, 88% { transform: translateY(0) scale(1); } 100% { opacity: 1; } }
+.whatsapp-float__button { display: inline-flex; width: 3.9rem; height: 3.9rem; min-height: 0; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,.9); border-radius: 50%; background: #25d366; color: #fff; padding: 0; box-shadow: 0 1rem 2.5rem rgba(5,22,16,.28); animation: whatsappFloatPulse 3.2s ease-in-out infinite; transition: background .25s ease, transform .25s ease; }
+.whatsapp-float__button:hover { background: #128c4a; transform: translateY(-3px); }
+.whatsapp-float__button svg { width: 1.7rem; height: 1.7rem; flex: 0 0 auto; }
+.whatsapp-float__button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+@keyframes whatsappFloatPulse { 0%, 72%, 100% { box-shadow: 0 1rem 2.5rem rgba(5,22,16,.28), 0 0 0 0 rgba(37,211,102,.32); } 84% { box-shadow: 0 1rem 2.5rem rgba(5,22,16,.28), 0 0 0 .65rem rgba(37,211,102,0); } }
 
 /* Página Trabajá con nosotros */
 .careers-page { min-height: 100vh; background: var(--cream); }
@@ -499,7 +544,7 @@ footer.careers-footer > small { width: 100%; margin-top: 0; }
   .hero__visual { min-height: 31rem; }
   .hero__seal { width: 6.5rem; }
   .hero-carousel__slide figcaption { bottom: 1rem; left: .8rem; max-width: calc(100% - 7rem); }
-  .hero-carousel__controls { right: .8rem; bottom: .8rem; gap: .45rem; }
+  .hero-carousel__controls { right: 5.25rem; bottom: .8rem; gap: .45rem; }
   .hero-carousel__controls > button { width: 2.45rem; height: 2.45rem; }
   .product-proof__marquee-track { gap: 1.35rem; }
   .product-proof__body { display: block; width: 100%; max-width: 100%; min-width: 0; min-height: auto; overflow: hidden; padding: 4.5rem 1.1rem; }
@@ -520,6 +565,11 @@ footer.careers-footer > small { width: 100%; margin-top: 0; }
   .branch-showcase__actions .text-button { align-self: flex-start; }
   .branch-showcase__selector { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 2.5rem; }
   .branch-showcase__selector button { min-width: 0; padding: .8rem .7rem; }
+  .maritimo-events { display: flex; min-height: 0; flex-direction: column; }
+  .maritimo-events__visual { min-height: 24rem; }
+  .maritimo-events__content { padding: 3.8rem 1.1rem; }
+  .maritimo-events h2 { max-width: 100%; font-size: clamp(3rem, 13vw, 4.3rem); }
+  .maritimo-events__button { width: 100%; }
   .section-heading { align-items: flex-start; flex-direction: column; }
   .flavours { overflow: hidden; padding: 4.5rem 1.1rem; }
   .flavours h2 { max-width: 100%; font-size: clamp(2.75rem, 12.5vw, 4rem); }
@@ -580,6 +630,10 @@ footer.careers-footer > small { width: 100%; margin-top: 0; }
   .footer-jobs { text-align: left; }
   .footer-meta { width: 100%; max-width: 100%; align-items: flex-start; flex-direction: column; }
   .footer-credit { line-height: 1.55; }
+  .whatsapp-float { right: .8rem; bottom: .8rem; }
+  .whatsapp-float__button { width: 3.7rem; height: 3.7rem; }
+  .whatsapp-float__prompt { max-width: min(18.5rem, calc(100vw - 1.6rem)); padding: .9rem 1rem; }
+  .whatsapp-float__prompt strong { font-size: 1.35rem; }
   .branch-modal { width: 100%; max-width: 100%; overflow-x: hidden; padding: 1rem; }
   .branch-modal__content { margin: auto 0; }
   .branch-options { width: 100%; max-width: 100%; grid-template-columns: minmax(0, 1fr); }
@@ -628,6 +682,7 @@ footer.careers-footer > small { width: 100%; margin-top: 0; }
   .scroll-reveal { opacity: 1; transform: none; }
   .branch-showcase__visual > img { transform: none; }
   .order-channel--direct .order-channel__arrow, .direct-order__button::before, .direct-order__button i { animation: none; }
+  .whatsapp-float__button { animation: none; }
   .direct-order__mark, .direct-order__glow { transform: none; }
   .club-teaser__mark { transform: none; }
 }
