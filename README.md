@@ -1,4 +1,4 @@
-# Cosa Nostra — V30 · WhatsApp móvil y footer corregidos
+# Cosa Nostra — V31 · Google Tag Manager y favicon corregido
 
 Landing de Cosa Nostra Empanadas desarrollada con React y Vite. Esta versión
 incluye el diseño interactivo aprobado, carruseles de producto, selección de
@@ -27,6 +27,9 @@ evitar el pixelado de la miniatura original. La V30 corrige la interacción del
 botón flotante de WhatsApp en pantallas táctiles: el primer toque abre el chat
 sin quedar atrapado en el aviso. Además, el flotante se oculta suavemente al
 entrar al footer para no tapar “Trabajá con nosotros” ni otros enlaces.
+La V31 incorpora directamente el contenedor `GTM-W4ZXM4CM` en el documento y
+agrega favicon ICO, PNG, SVG, Apple Touch Icon y manifiesto web, con versión de
+caché actualizada para que el ícono se muestre correctamente al publicar.
 
 ## Ejecutar el proyecto
 
@@ -59,7 +62,13 @@ Vite crea la carpeta `dist`. Para DonWeb se sube **el contenido de `dist`** a
 - Responsive móvil corregido para evitar desplazamiento horizontal, cortes y
   franjas vacías en pantallas de 320 a 430 px.
 
-## Activar Analytics
+## Analytics
+
+Google Tag Manager ya está activo mediante el contenedor `GTM-W4ZXM4CM` dentro
+de `index.html`. No hace falta completar otra variable para esta publicación.
+
+La integración por variables queda disponible únicamente para proyectos futuros
+o para reemplazar el contenedor:
 
 Copiar `.env.example` como `.env` y completar **una** de estas opciones:
 

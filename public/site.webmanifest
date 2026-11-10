@@ -1,0 +1,19 @@
+{
+  "name": "Cosa Nostra Empanadas",
+  "short_name": "Cosa Nostra",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png?v=31",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512x512.png?v=31",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#163b2f",
+  "background_color": "#163b2f",
+  "display": "standalone"
+}
