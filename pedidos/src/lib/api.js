@@ -6,6 +6,9 @@ function buildMockOrder(payload) {
   const branch = getBranch(payload.branchId)
   const items = payload.items.map(({ productId, quantity, configuration }) => {
     const product = getProduct(productId)
+    if (!product || product.branchId !== branch.id) {
+      throw new Error('Uno de los productos no pertenece a la sucursal seleccionada.')
+    }
     return {
       productId,
       name: product.name,
@@ -32,6 +35,14 @@ function buildMockOrder(payload) {
     deliveryFee,
     total: subtotal + deliveryFee,
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    timeline: [
+      {
+        status: 'awaiting_payment',
+        label: 'Esperando el pago',
+        at: new Date().toISOString(),
+      },
+    ],
   }
 }
 
@@ -77,6 +88,7 @@ export async function createPayment(order) {
     return {
       provider: 'mock',
       status: 'approved',
+      orderStatus: 'paid',
       checkoutUrl: `/?payment=approved&order=${encodeURIComponent(order.id)}&demo=1`,
     }
   }
@@ -84,5 +96,11 @@ export async function createPayment(order) {
   return request('/api/create-payment', {
     method: 'POST',
     body: JSON.stringify({ orderId: order.id }),
+  })
+}
+
+export async function getOrderStatus(orderId) {
+  return request(`/api/order-status?orderId=${encodeURIComponent(orderId)}`, {
+    method: 'GET',
   })
 }

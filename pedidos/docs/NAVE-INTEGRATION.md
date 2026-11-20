@@ -48,6 +48,8 @@ Configurar estos valores primero para Deploy Previews o una rama de sandbox. No 
 8. El webhook valida su firma y actualiza la orden.
 9. La pantalla de confirmación consulta el estado real del servidor.
 
+La estructura de estados, el endpoint de consulta y la idempotencia base ya están implementados. Falta conectar la firma y los identificadores reales que defina Nave.
+
 ## Requisitos antes de cobrar
 
 - validar la firma del webhook con el algoritmo oficial;

@@ -1,5 +1,5 @@
 import { errorResponse, json, methodNotAllowed, readJson, RequestError } from './_shared/http.mjs'
-import { patchOrder } from './_shared/orders.mjs'
+import { applyPaymentEvent } from './_shared/orders.mjs'
 
 export default async function handler(request) {
   if (request.method !== 'POST') return methodNotAllowed()
@@ -18,18 +18,22 @@ export default async function handler(request) {
       throw new RequestError('INVALID_WEBHOOK', 'Evento de prueba inválido.')
     }
 
-    const statusByPayment = {
-      approved: 'paid',
-      rejected: 'payment_rejected',
-      pending: 'payment_pending',
-    }
-    const order = await patchOrder(event.orderId, {
-      status: statusByPayment[event.status],
-      payment: { provider: 'mock', status: event.status },
+    const eventId = event.id || `mock:${event.orderId}:${event.status}`
+    const result = await applyPaymentEvent(event.orderId, {
+      eventId,
+      provider: 'mock',
+      paymentStatus: event.status,
+      checkoutId: event.checkoutId || null,
     })
-    if (!order) throw new RequestError('ORDER_NOT_FOUND', 'No encontramos el pedido.', 404)
+    if (!result) throw new RequestError('ORDER_NOT_FOUND', 'No encontramos el pedido.', 404)
 
-    return json({ received: true, orderId: order.id, status: order.status })
+    return json({
+      received: true,
+      duplicate: result.duplicate,
+      ignored: result.ignored,
+      orderId: result.order.id,
+      status: result.order.status,
+    })
   } catch (error) {
     return errorResponse(error)
   }

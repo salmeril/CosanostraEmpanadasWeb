@@ -10,10 +10,27 @@
 - base responsive y accesible;
 - despliegues de prueba sin indexación.
 
+## 2.0.3 · Estados e idempotencia base (incluido)
+
+- historial cronológico por pedido;
+- máquina de estados con transiciones válidas;
+- consulta pública limitada del estado, sin datos personales;
+- protección contra eventos de pago duplicados;
+- rechazo de retrocesos causados por eventos fuera de orden;
+- animación de creación, conexión y confirmación del pago.
+
+## 2.0.4 · Catálogo real por sucursal (incluido)
+
+- carta copiada de los menús públicos actuales de Pedido Directo;
+- productos, categorías y precios separados por local;
+- promos con selección exacta de sabores;
+- bloqueo de productos cruzados entre sucursales en frontend y servidor;
+- fecha de última sincronización visible y guardada en el catálogo.
+
 ## 2.1 · Datos comerciales reales
 
-- confirmar catálogo, fotos, descripciones y precios;
-- confirmar menú y disponibilidad por sucursal;
+- volver a confirmar catálogo, fotos, descripciones, stock y precios antes de publicar;
+- crear un panel propio para administrar disponibilidad por sucursal;
 - definir zonas, costos y mínimos de delivery;
 - definir horarios, feriados y pausas de cada local;
 - agregar opciones de producto: gustos, cantidad, adicionales y aclaraciones;
@@ -25,6 +42,7 @@
 - implementar autenticación y creación de checkout;
 - implementar firma del webhook;
 - probar estados e idempotencia;
+- reemplazar el mapeo simulado por la tabla oficial de estados de Nave;
 - validar conciliación con el panel del comercio.
 
 ## 2.3 · Operación del pedido

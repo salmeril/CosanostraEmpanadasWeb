@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 
 import {
   branches,
-  categories,
-  products,
-  empanadaFlavors,
+  catalogLastSyncedAt,
+  getCategoryLabel,
+  getCategoriesForBranch,
+  getEmpanadaFlavors,
   getBranch,
   getProduct,
+  getProductsForBranch,
 } from "../shared/catalog.mjs";
 
-import { createOrder, createPayment } from "./lib/api.js";
+import { createOrder, createPayment, getOrderStatus } from "./lib/api.js";
 
 const money = new Intl.NumberFormat("es-AR", {
   style: "currency",
@@ -22,10 +25,34 @@ const money = new Intl.NumberFormat("es-AR", {
 const SAVED_ADDRESS_KEY = "cn-last-address";
 const CONFIGURED_CART_KEY = "cn-configured-cart";
 
+const wait = (milliseconds) =>
+  new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+
+const ORDER_STATUS_LABELS = {
+  awaiting_payment: "Esperando el pago",
+  payment_pending: "Validando el pago",
+  paid: "Pago aprobado",
+  payment_rejected: "Pago rechazado",
+  payment_expired: "Pago vencido",
+  sent_to_branch: "Enviado al local",
+  received: "Recibido por el local",
+  preparing: "En preparación",
+  ready: "Listo",
+  out_for_delivery: "En camino",
+  delivered: "Entregado",
+  cancelled: "Cancelado",
+};
+
+function orderStatusLabel(status) {
+  return ORDER_STATUS_LABELS[status] || "Pedido creado";
+}
+
 function readConfiguredCart() {
   try {
     const value = JSON.parse(localStorage.getItem(CONFIGURED_CART_KEY) || "[]");
-    return Array.isArray(value) ? value : [];
+    return Array.isArray(value)
+      ? value.filter((item) => getProduct(item?.productId))
+      : [];
   } catch {
     return [];
   }
@@ -232,9 +259,7 @@ function ProductCard({ product, quantity, configuredCount, onAdd, onDecrease, on
       <div className="product-card__body">
         <div>
           <p>
-            {product.category === "gourmet"
-              ? "Empanada gourmet"
-              : product.category}
+            {getCategoryLabel(product.category)}
           </p>
 
           <h3>{product.name}</h3>
@@ -271,7 +296,7 @@ function ProductCard({ product, quantity, configuredCount, onAdd, onDecrease, on
   );
 }
 
-function FlavorSelector({ product, onClose, onConfirm }) {
+function FlavorSelector({ product, flavors, onClose, onConfirm }) {
   const [selection, setSelection] = useState({});
   const selectedCount = Object.values(selection).reduce(
     (sum, quantity) => sum + quantity,
@@ -324,7 +349,7 @@ function FlavorSelector({ product, onClose, onConfirm }) {
           <div>
             <span className="eyebrow">Armá tu elección</span>
             <h2 id="flavor-selector-title">{product.name}</h2>
-            <p>Podés combinar sabores clásicos y gourmet en esta prueba.</p>
+            <p>Podés combinar sabores clásicos y gourmet.</p>
           </div>
 
           <button className="icon-close" type="button" onClick={onClose} aria-label="Cerrar">
@@ -343,7 +368,7 @@ function FlavorSelector({ product, onClose, onConfirm }) {
         </div>
 
         <div className="flavor-list">
-          {empanadaFlavors.map((flavor) => {
+          {flavors.map((flavor) => {
             const quantity = selection[flavor.id] || 0;
             return (
               <article className={quantity > 0 ? "is-selected" : ""} key={flavor.id}>
@@ -364,7 +389,7 @@ function FlavorSelector({ product, onClose, onConfirm }) {
         </div>
 
         <footer className="flavor-selector__footer">
-          <small>Sabores y precios de demostración.</small>
+          <small>Elegí exactamente {product.selectionCount} empanadas.</small>
           <button
             className="primary-button"
             type="button"
@@ -540,6 +565,47 @@ function CartDrawer({
   );
 }
 
+function PaymentProgress({ step }) {
+  const steps = [
+    { id: "creating_order", label: "Guardando tu pedido" },
+    { id: "opening_payment", label: "Conectando el pago" },
+    { id: "confirming", label: "Confirmando la aprobación" },
+  ];
+  const activeIndex = Math.max(
+    0,
+    steps.findIndex((item) => item.id === step),
+  );
+
+  return createPortal(
+    <div className="payment-progress" role="status" aria-live="polite">
+      <div className="payment-progress__glow" aria-hidden="true" />
+      <section>
+        <div className="payment-progress__brand">
+          <img src="/assets/brand/cosa-nostra-monograma.png" alt="" />
+          <span className="payment-progress__spinner" aria-hidden="true" />
+        </div>
+
+        <span className="eyebrow">Pedido protegido</span>
+        <h2>{steps[activeIndex].label}…</h2>
+        <p>No cierres esta pantalla. Estamos verificando cada paso.</p>
+
+        <div className="payment-progress__steps">
+          {steps.map((item, index) => (
+            <div
+              className={`${index < activeIndex ? "is-done" : ""} ${index === activeIndex ? "is-active" : ""}`}
+              key={item.id}
+            >
+              <span>{index < activeIndex ? "✓" : index + 1}</span>
+              <strong>{item.label}</strong>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>,
+    document.body,
+  );
+}
+
 function Checkout({ cart, configuredItems, branch, onBack, onSuccess }) {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -548,6 +614,8 @@ function Checkout({ cart, configuredItems, branch, onBack, onSuccess }) {
   const [fulfillment, setFulfillment] = useState("delivery");
 
   const [loading, setLoading] = useState(false);
+
+  const [paymentStep, setPaymentStep] = useState("creating_order");
 
   const [error, setError] = useState("");
 
@@ -603,6 +671,8 @@ function Checkout({ cart, configuredItems, branch, onBack, onSuccess }) {
 
     setLoading(true);
 
+    setPaymentStep("creating_order");
+
     setError("");
 
     try {
@@ -629,6 +699,10 @@ function Checkout({ cart, configuredItems, branch, onBack, onSuccess }) {
         notes: form.notes.trim(),
       });
 
+      setPaymentStep("opening_payment");
+
+      await wait(450);
+
       if (fulfillment === "delivery" && rememberAddress) {
         localStorage.setItem(
           SAVED_ADDRESS_KEY,
@@ -643,6 +717,10 @@ function Checkout({ cart, configuredItems, branch, onBack, onSuccess }) {
 
       const payment = await createPayment(order);
 
+      setPaymentStep("confirming");
+
+      await wait(850);
+
       onSuccess({ order, payment });
     } catch (submitError) {
       setError(
@@ -655,6 +733,8 @@ function Checkout({ cart, configuredItems, branch, onBack, onSuccess }) {
 
   return (
     <main className="checkout-page">
+      {loading && <PaymentProgress step={paymentStep} />}
+
       <button className="back-button" type="button" onClick={onBack}>
         ← Volver al menú
       </button>
@@ -882,6 +962,54 @@ function Success({ result, onRestart }) {
   }, []);
 
   const [copyLabel, setCopyLabel] = useState("Copiar pedido");
+  const [livePayment, setLivePayment] = useState(result.payment);
+  const [liveOrderStatus, setLiveOrderStatus] = useState(
+    result.payment.orderStatus ||
+      (result.payment.status === "approved" ? "paid" : result.order.status),
+  );
+
+  useEffect(() => {
+    if (result.order.mode === "mock") return undefined;
+
+    let cancelled = false;
+    let timerId;
+    let attempts = 0;
+
+    async function refreshStatus() {
+      try {
+        const status = await getOrderStatus(result.order.id);
+        if (cancelled) return;
+
+        setLiveOrderStatus(status.status);
+        setLivePayment((current) => ({
+          ...current,
+          status: status.paymentStatus,
+        }));
+
+        attempts += 1;
+        if (
+          attempts < 40 &&
+          !["delivered", "cancelled", "payment_rejected", "payment_expired"].includes(
+            status.status,
+          )
+        ) {
+          timerId = window.setTimeout(refreshStatus, 3000);
+        }
+      } catch {
+        attempts += 1;
+        if (!cancelled && attempts < 8) {
+          timerId = window.setTimeout(refreshStatus, 4000);
+        }
+      }
+    }
+
+    refreshStatus();
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timerId);
+    };
+  }, [result.order.id, result.order.mode]);
+
   const selectedBranch = getBranch(result.order.branch.id);
   const testNumber = normalizeWhatsAppNumber(
     import.meta.env.VITE_WHATSAPP_TEST_NUMBER,
@@ -890,13 +1018,13 @@ function Success({ result, onRestart }) {
   const whatsappNumber = testNumber || branchNumber;
   const isWhatsAppTest =
     Boolean(testNumber) || result.order.mode !== "production";
-  const paymentStatus = getPaymentStatus(result.payment);
+  const paymentStatus = getPaymentStatus(livePayment);
   const whatsappMessage = buildWhatsAppMessage(
     result.order,
-    result.payment,
+    livePayment,
     isWhatsAppTest,
   );
-  const whatsappUrl = whatsappNumber
+  const whatsappUrl = whatsappNumber && paymentStatus.approved
     ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`
     : "";
 
@@ -950,15 +1078,23 @@ function Success({ result, onRestart }) {
         <span>Pago</span>
         <strong>
           {paymentStatus.label}
-          {result.payment.provider === "mock" ? " · Simulado" : " · Nave"}
+          {livePayment.provider === "mock" ? " · Simulado" : " · Nave"}
         </strong>
+
+        <span>Pedido</span>
+        <strong>{orderStatusLabel(liveOrderStatus)}</strong>
       </div>
 
       <div className="whatsapp-panel">
-        <strong>Enviar el pedido al local</strong>
+        <strong>
+          {paymentStatus.approved
+            ? "Enviar el pedido al local"
+            : "Esperando confirmación del pago"}
+        </strong>
         <p>
-          WhatsApp abrirá el mensaje completo. Revisalo y presioná Enviar para
-          terminar la prueba.
+          {paymentStatus.approved
+            ? "WhatsApp abrirá el mensaje completo. Revisalo y presioná Enviar para terminar la prueba."
+            : "El envío al local se habilita únicamente cuando el servidor confirma el pago."}
         </p>
 
         <div className="whatsapp-actions">
@@ -971,9 +1107,13 @@ function Success({ result, onRestart }) {
             >
               Abrir WhatsApp
             </a>
-          ) : (
+          ) : paymentStatus.approved ? (
             <span className="whatsapp-missing">
               Falta configurar el número de prueba.
+            </span>
+          ) : (
+            <span className="whatsapp-missing whatsapp-missing--waiting">
+              Validando el pago…
             </span>
           )}
 
@@ -981,6 +1121,7 @@ function Success({ result, onRestart }) {
             className="copy-order-button"
             type="button"
             onClick={copyOrder}
+            disabled={!paymentStatus.approved}
           >
             {copyLabel}
           </button>
@@ -1023,13 +1164,30 @@ export default function App() {
 
   const [cart, setCart] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem("cn-cart") || "{}");
+      const saved = JSON.parse(localStorage.getItem("cn-cart") || "{}");
+      return Object.fromEntries(
+        Object.entries(saved).filter(
+          ([productId, quantity]) => getProduct(productId) && Number(quantity) > 0,
+        ),
+      );
     } catch {
       return {};
     }
   });
 
   const branch = getBranch(branchId) || branches[0];
+  const activeProducts = useMemo(
+    () => getProductsForBranch(branch.id),
+    [branch.id],
+  );
+  const activeCategories = useMemo(
+    () => getCategoriesForBranch(branch.id),
+    [branch.id],
+  );
+  const activeEmpanadaFlavors = useMemo(
+    () => getEmpanadaFlavors(branch.id),
+    [branch.id],
+  );
 
   const simpleCartCount = Object.values(cart).reduce(
     (total, quantity) => total + quantity,
@@ -1054,7 +1212,7 @@ export default function App() {
   const filteredProducts = useMemo(() => {
     const normalized = search.trim().toLocaleLowerCase("es");
 
-    return products.filter((product) => {
+    return activeProducts.filter((product) => {
       const matchesCategory =
         category === "todos" || product.category === category;
 
@@ -1066,7 +1224,7 @@ export default function App() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [category, search]);
+  }, [activeProducts, category, search]);
 
   useEffect(() => {
     localStorage.setItem("cn-cart", JSON.stringify(cart));
@@ -1075,6 +1233,12 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(CONFIGURED_CART_KEY, JSON.stringify(configuredItems));
   }, [configuredItems]);
+
+  useEffect(() => {
+    if (!activeCategories.some((item) => item.id === category)) {
+      setCategory("todos");
+    }
+  }, [activeCategories, category]);
 
   function chooseBranch(id) {
     if (branchId && branchId !== id && cartCount > 0) {
@@ -1222,13 +1386,13 @@ export default function App() {
         <section className="menu-section" id="menu">
           <div className="menu-heading">
             <div>
-              <span className="eyebrow">Menú de prueba</span>
+              <span className="eyebrow">Carta de {branch.name}</span>
 
               <h2>Eso que ya estás imaginando.</h2>
 
               <p>
-                Productos y precios cargados para validar la experiencia. Antes
-                de producción se reemplazan por el menú definitivo.
+                Elegí por categoría. Carta sincronizada con el menú actual el
+                {` ${new Date(`${catalogLastSyncedAt}T12:00:00`).toLocaleDateString("es-AR")}`}.
               </p>
             </div>
 
@@ -1248,7 +1412,7 @@ export default function App() {
           </div>
 
           <div className="category-tabs" aria-label="Categorías del menú">
-            {categories.map((item) => (
+            {activeCategories.map((item) => (
               <button
                 className={category === item.id ? "is-active" : ""}
 
@@ -1380,6 +1544,8 @@ export default function App() {
       {configureProduct && (
         <FlavorSelector
           product={configureProduct}
+
+          flavors={activeEmpanadaFlavors}
           onClose={() => setConfigureProduct(null)}
           onConfirm={(item) => {
             setConfiguredItems((current) => [...current, item]);

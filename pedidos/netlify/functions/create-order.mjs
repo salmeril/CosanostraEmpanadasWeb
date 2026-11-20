@@ -1,5 +1,6 @@
 import { branches, getBranch, getProduct } from '../../shared/catalog.mjs'
 import { errorResponse, json, methodNotAllowed, readJson, RequestError } from './_shared/http.mjs'
+import { ORDER_STATUS } from './_shared/order-state.mjs'
 import { saveOrder } from './_shared/orders.mjs'
 
 const MAX_ITEM_QUANTITY = 50
@@ -8,7 +9,7 @@ function cleanText(value, maxLength) {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : ''
 }
 
-function normalizeConfiguration(product, rawConfiguration) {
+function normalizeConfiguration(product, rawConfiguration, branch) {
   if (!product.configurationType) return null
 
   if (
@@ -25,7 +26,11 @@ function normalizeConfiguration(product, rawConfiguration) {
     const flavor = getProduct(rawSelection?.productId)
     const quantity = Number(rawSelection?.quantity)
 
-    if (!flavor || !['empanadas', 'gourmet'].includes(flavor.category)) {
+    if (
+      !flavor ||
+      flavor.branchId !== branch.id ||
+      !['empanadas', 'gourmet'].includes(flavor.category)
+    ) {
       throw new RequestError('INVALID_FLAVOR', 'Uno de los sabores elegidos no está disponible.')
     }
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > product.selectionCount) {
@@ -46,7 +51,7 @@ function normalizeConfiguration(product, rawConfiguration) {
   return { type: product.configurationType, selections }
 }
 
-function normalizeItems(rawItems) {
+function normalizeItems(rawItems, branch) {
   if (!Array.isArray(rawItems) || rawItems.length === 0) {
     throw new RequestError('EMPTY_CART', 'El carrito está vacío.')
   }
@@ -57,7 +62,7 @@ function normalizeItems(rawItems) {
     const product = getProduct(rawItem?.productId)
     const quantity = Number(rawItem?.quantity)
 
-    if (!product) {
+    if (!product || product.branchId !== branch.id) {
       throw new RequestError('INVALID_PRODUCT', 'Uno de los productos ya no está disponible.')
     }
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_ITEM_QUANTITY) {
@@ -78,7 +83,7 @@ function normalizeItems(rawItems) {
         quantity: 1,
         unitPrice: product.price,
         lineTotal: product.price,
-        configuration: normalizeConfiguration(product, rawItem.configuration),
+        configuration: normalizeConfiguration(product, rawItem.configuration, branch),
       })
       continue
     }
@@ -146,7 +151,7 @@ export default async function handler(request) {
       throw new RequestError('INVALID_ADDRESS', 'Completá la dirección de entrega.')
     }
 
-    const items = normalizeItems(payload.items)
+    const items = normalizeItems(payload.items, branch)
     const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0)
     if (subtotal < branch.minOrder) {
       throw new RequestError(
@@ -160,7 +165,7 @@ export default async function handler(request) {
     const deliveryFee = fulfillment === 'delivery' ? branch.deliveryFee : 0
     const order = {
       id: makeOrderId(),
-      status: 'awaiting_payment',
+      status: ORDER_STATUS.AWAITING_PAYMENT,
       mode: 'test',
       currency: 'ARS',
       branch: { id: branch.id, name: branch.name },
@@ -173,6 +178,16 @@ export default async function handler(request) {
       deliveryFee,
       total: subtotal + deliveryFee,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      timeline: [
+        {
+          status: ORDER_STATUS.AWAITING_PAYMENT,
+          source: 'checkout',
+          reason: 'Pedido creado',
+          at: new Date().toISOString(),
+        },
+      ],
+      processedEvents: [],
     }
 
     await saveOrder(order)

@@ -6,19 +6,41 @@ Prototipo funcional del canal de pedidos directos de Cosa Nostra. Es un proyecto
 
 - selección de sucursal;
 - menú con categorías y búsqueda;
+- carta real separada por sucursal, sincronizada desde Pedido Directo el 20/11/2026;
 - carrito persistente en el navegador;
-- selector de sabores para media docena y docena, con control de cantidad exacta;
+- selector de sabores para las promos de 2, 3, 6, 8 y 12 empanadas, con control de cantidad exacta;
 - delivery o retiro en local;
 - checkout con validación de datos;
 - API de pedidos en Netlify Functions;
 - persistencia de pedidos de prueba en Netlify Blobs;
 - pago simulado;
 - confirmación animada del pago aprobado;
+- transición animada mientras se crea y valida el pago;
 - mensaje de WhatsApp con detalle de sabores y estado del pago;
+- historial de estados del pedido y consulta segura desde el frontend;
+- protección básica contra eventos de pago duplicados o fuera de orden;
+- validación que impide enviar productos de una sucursal a otra;
 - adaptador preparado para integrar Nave cuando el comercio tenga las credenciales y el contrato oficial de API;
 - diseño responsive, animaciones y modo de movimiento reducido.
 
-Los productos, precios, costos de envío, mínimos y direcciones de esta versión son datos de demostración. Deben validarse antes de producción.
+Los nombres, categorías y precios fueron copiados de los menús públicos actuales de cada sucursal. La fecha de sincronización está en `shared/catalog.mjs`. Costos de envío, mínimos, stock y precios deben volver a validarse antes de producción porque pueden cambiar.
+
+## Catálogo por sucursal
+
+`shared/catalog.mjs` es la fuente central del prototipo. Cada producto tiene un `branchId`, por lo que cambiar de local también cambia productos, categorías y precios. B. Marítimo conserva su carta ampliada de salón; Berazategui y Quilmes muestran su oferta concentrada en empanadas; Ranelagh incluye pizzas y calzones.
+
+Esta copia es manual. La etapa siguiente debe reemplazarla con un panel propio para administrar precios, stock y disponibilidad sin editar código.
+
+## Flujo de estados incluido
+
+El servidor controla la secuencia del pedido y evita retrocesos inválidos. Un pago aprobado no puede volver a pendiente por un webhook atrasado.
+
+```text
+awaiting_payment → payment_pending → paid → sent_to_branch
+→ received → preparing → ready → out_for_delivery → delivered
+```
+
+Los estados rechazado, vencido y cancelado se guardan como cierres alternativos. La pantalla consulta `/api/order-status` sin exponer datos personales del cliente.
 
 ## Desarrollo local
 
@@ -79,7 +101,7 @@ El archivo `robots.txt` y la etiqueta `noindex` bloquean la indexación, pero el
 ```bash
 git switch fase-2-pedidos
 git add pedidos
-git commit -m "feat(pedidos): selector de sabores y pago animado"
+git commit -m "feat(pedidos): catalogo real por sucursal y estados de pago"
 git push
 ```
 
@@ -87,6 +109,7 @@ git push
 
 ```bash
 npm run build
+npm test
 ```
 
 Antes de publicar en producción se debe completar la lista de [docs/ROADMAP.md](docs/ROADMAP.md).

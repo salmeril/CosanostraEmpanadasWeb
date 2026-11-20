@@ -1,13 +1,14 @@
 {
   "name": "cosa-nostra-pedidos-fase-2",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "dev:netlify": "npx netlify dev",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test"
   },
   "dependencies": {
     "@netlify/blobs": "latest",
