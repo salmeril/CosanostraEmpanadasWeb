@@ -4,6 +4,7 @@ import {
   branches,
   categories,
   products,
+  empanadaFlavors,
   getBranch,
   getProduct,
 } from "../shared/catalog.mjs";
@@ -19,6 +20,22 @@ const money = new Intl.NumberFormat("es-AR", {
 });
 
 const SAVED_ADDRESS_KEY = "cn-last-address";
+const CONFIGURED_CART_KEY = "cn-configured-cart";
+
+function readConfiguredCart() {
+  try {
+    const value = JSON.parse(localStorage.getItem(CONFIGURED_CART_KEY) || "[]");
+    return Array.isArray(value) ? value : [];
+  } catch {
+    return [];
+  }
+}
+
+function formatFlavorSummary(configuration) {
+  return (configuration?.selections || [])
+    .map((selection) => `${selection.quantity}× ${selection.name}`)
+    .join(" · ");
+}
 
 function readSavedAddress() {
   try {
@@ -26,6 +43,75 @@ function readSavedAddress() {
   } catch {
     return null;
   }
+}
+
+function normalizeWhatsAppNumber(value) {
+  return String(value || "").replace(/\D/g, "");
+}
+
+function getPaymentStatus(payment) {
+  const status = payment?.status || "unknown";
+  const labels = {
+    approved: "✅ Aprobado",
+    pending: "⏳ Pendiente",
+    rejected: "❌ Rechazado",
+    canceled: "🚫 Cancelado",
+    expired: "⌛ Vencido",
+  };
+
+  return {
+    label: labels[status] || "⚠️ Sin confirmar",
+    approved: status === "approved",
+  };
+}
+
+function buildWhatsAppMessage(order, payment, isTest) {
+  const deliveryLabel =
+    order.fulfillment === "delivery" ? "Delivery" : "Retiro en el local";
+  const paymentStatus = getPaymentStatus(payment);
+  const paymentProvider =
+    payment?.provider === "mock" ? "Nave (simulado)" : "Nave";
+  const lines = [
+    isTest
+      ? "🧪 *PEDIDO DE PRUEBA — NO PREPARAR*"
+      : paymentStatus.approved
+        ? "🟢 *NUEVO PEDIDO WEB — PAGO APROBADO*"
+        : "🟠 *PEDIDO WEB — PAGO SIN CONFIRMAR*",
+    "",
+    `*Pedido:* ${order.id}`,
+    `*Sucursal:* ${order.branch.name}`,
+    `*Cliente:* ${order.customer.name}`,
+    `*Teléfono:* ${order.customer.phone}`,
+    "",
+    "*Detalle:*",
+    ...order.items.flatMap((item) => {
+      const itemLine =
+        `• ${item.quantity}x ${item.name} — ${money.format(item.lineTotal)}`;
+      const flavors = formatFlavorSummary(item.configuration);
+      return flavors ? [itemLine, `  Sabores: ${flavors}`] : [itemLine];
+    }),
+    "",
+    `*Entrega:* ${deliveryLabel}`,
+  ];
+
+  if (order.fulfillment === "delivery" && order.address) {
+    lines.push(`*Dirección:* ${order.address.street}, ${order.address.city}`);
+  }
+
+  if (order.notes) lines.push(`*Notas:* ${order.notes}`);
+
+  lines.push(
+    "",
+    `*Total:* ${money.format(order.total)}`,
+    `*Pago:* ${paymentStatus.label}`,
+    `*Medio:* ${paymentProvider}`,
+  );
+
+  if (!isTest && !paymentStatus.approved) {
+    lines.push("", "⚠️ *NO PREPARAR HASTA CONFIRMAR EL PAGO*");
+  }
+
+  return lines.join("\n");
 }
 
 function BagIcon() {
@@ -132,7 +218,9 @@ function QuantityControl({ value, onDecrease, onIncrease, compact = false }) {
   );
 }
 
-function ProductCard({ product, quantity, onAdd, onDecrease }) {
+function ProductCard({ product, quantity, configuredCount, onAdd, onDecrease, onConfigure }) {
+  const isConfigurable = Boolean(product.configurationType);
+
   return (
     <article className="product-card">
       <div className="product-card__image">
@@ -157,7 +245,12 @@ function ProductCard({ product, quantity, onAdd, onDecrease }) {
         <div className="product-card__footer">
           <strong>{money.format(product.price)}</strong>
 
-          {quantity > 0 ? (
+          {isConfigurable ? (
+            <button className="add-button add-button--configure" type="button" onClick={onConfigure}>
+              {configuredCount > 0 ? `Armar otra (${configuredCount})` : "Elegir sabores"}
+              <span>+</span>
+            </button>
+          ) : quantity > 0 ? (
             <QuantityControl
               value={quantity}
 
@@ -178,13 +271,123 @@ function ProductCard({ product, quantity, onAdd, onDecrease }) {
   );
 }
 
+function FlavorSelector({ product, onClose, onConfirm }) {
+  const [selection, setSelection] = useState({});
+  const selectedCount = Object.values(selection).reduce(
+    (sum, quantity) => sum + quantity,
+    0,
+  );
+  const remaining = product.selectionCount - selectedCount;
+
+  function changeFlavor(productId, change) {
+    setSelection((current) => {
+      const currentValue = current[productId] || 0;
+      if (change > 0 && selectedCount >= product.selectionCount) return current;
+
+      const nextValue = Math.max(0, currentValue + change);
+      const next = { ...current };
+      if (nextValue === 0) delete next[productId];
+      else next[productId] = nextValue;
+      return next;
+    });
+  }
+
+  function confirm() {
+    if (selectedCount !== product.selectionCount) return;
+
+    const selections = Object.entries(selection).map(([productId, quantity]) => ({
+      productId,
+      name: getProduct(productId).name,
+      quantity,
+    }));
+
+    onConfirm({
+      id: `${product.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      productId: product.id,
+      quantity: 1,
+      configuration: {
+        type: product.configurationType,
+        selections,
+      },
+    });
+  }
+
+  return (
+    <div className="modal-backdrop flavor-backdrop" role="presentation">
+      <section
+        className="flavor-selector"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="flavor-selector-title"
+      >
+        <header className="flavor-selector__header">
+          <div>
+            <span className="eyebrow">Armá tu elección</span>
+            <h2 id="flavor-selector-title">{product.name}</h2>
+            <p>Podés combinar sabores clásicos y gourmet en esta prueba.</p>
+          </div>
+
+          <button className="icon-close" type="button" onClick={onClose} aria-label="Cerrar">
+            <CloseIcon />
+          </button>
+        </header>
+
+        <div className={`flavor-progress ${remaining === 0 ? "is-complete" : ""}`}>
+          <div>
+            <strong>{selectedCount} de {product.selectionCount}</strong>
+            <span>{remaining === 0 ? "¡Lista para agregar!" : `Faltan ${remaining}`}</span>
+          </div>
+          <div className="flavor-progress__track">
+            <span style={{ width: `${(selectedCount / product.selectionCount) * 100}%` }} />
+          </div>
+        </div>
+
+        <div className="flavor-list">
+          {empanadaFlavors.map((flavor) => {
+            const quantity = selection[flavor.id] || 0;
+            return (
+              <article className={quantity > 0 ? "is-selected" : ""} key={flavor.id}>
+                <img src={flavor.image} alt="" />
+                <div>
+                  <small>{flavor.category === "gourmet" ? "Gourmet" : "Clásica"}</small>
+                  <strong>{flavor.name}</strong>
+                </div>
+                <QuantityControl
+                  value={quantity}
+                  onDecrease={() => changeFlavor(flavor.id, -1)}
+                  onIncrease={() => changeFlavor(flavor.id, 1)}
+                  compact
+                />
+              </article>
+            );
+          })}
+        </div>
+
+        <footer className="flavor-selector__footer">
+          <small>Sabores y precios de demostración.</small>
+          <button
+            className="primary-button"
+            type="button"
+            disabled={selectedCount !== product.selectionCount}
+            onClick={confirm}
+          >
+            {remaining === 0 ? `Agregar por ${money.format(product.price)}` : `Elegí ${remaining} más`}
+          </button>
+        </footer>
+      </section>
+    </div>
+  );
+}
+
 function CartDrawer({
   open,
   cart,
+  configuredItems,
   branch,
   onClose,
   onAdd,
   onDecrease,
+  onRemoveConfigured,
   onCheckout,
 }) {
   const cartItems = Object.entries(cart)
@@ -196,11 +399,17 @@ function CartDrawer({
 
     .filter((item) => item.product && item.quantity > 0);
 
-  const subtotal = cartItems.reduce(
+  const simpleSubtotal = cartItems.reduce(
     (total, item) => total + item.product.price * item.quantity,
 
     0,
   );
+  const configuredSubtotal = configuredItems.reduce((total, item) => {
+    const product = getProduct(item.productId);
+    return total + (product?.price || 0);
+  }, 0);
+  const subtotal = simpleSubtotal + configuredSubtotal;
+  const isEmpty = cartItems.length === 0 && configuredItems.length === 0;
 
   return (
     <>
@@ -235,7 +444,7 @@ function CartDrawer({
           </button>
         </header>
 
-        {cartItems.length === 0 ? (
+        {isEmpty ? (
           <div className="empty-cart">
             <BagIcon />
 
@@ -281,6 +490,31 @@ function CartDrawer({
                   <strong>{money.format(product.price * quantity)}</strong>
                 </article>
               ))}
+
+              {configuredItems.map((item) => {
+                const product = getProduct(item.productId);
+                return (
+                  <article className="cart-item cart-item--configured" key={item.id}>
+                    <img src={product.image} alt="" />
+
+                    <div>
+                      <h3>{product.name}</h3>
+                      <span className="cart-item__flavors">
+                        {formatFlavorSummary(item.configuration)}
+                      </span>
+                      <button
+                        className="remove-configured"
+                        type="button"
+                        onClick={() => onRemoveConfigured(item.id)}
+                      >
+                        Quitar
+                      </button>
+                    </div>
+
+                    <strong>{money.format(product.price)}</strong>
+                  </article>
+                );
+              })}
             </div>
 
             <footer className="cart-summary">
@@ -306,7 +540,11 @@ function CartDrawer({
   );
 }
 
-function Checkout({ cart, branch, onBack, onSuccess }) {
+function Checkout({ cart, configuredItems, branch, onBack, onSuccess }) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
   const [fulfillment, setFulfillment] = useState("delivery");
 
   const [loading, setLoading] = useState(false);
@@ -331,11 +569,20 @@ function Checkout({ cart, branch, onBack, onSuccess }) {
     notes: "",
   });
 
-  const items = Object.entries(cart)
+  const simpleItems = Object.entries(cart)
 
     .filter(([, quantity]) => quantity > 0)
 
     .map(([productId, quantity]) => ({ productId, quantity }));
+
+  const configuredOrderItems = configuredItems.map((item) => ({
+    id: item.id,
+    productId: item.productId,
+    quantity: 1,
+    configuration: item.configuration,
+  }));
+
+  const items = [...simpleItems, ...configuredOrderItems];
 
   const subtotal = items.reduce(
     (total, item) => total + getProduct(item.productId).price * item.quantity,
@@ -593,9 +840,12 @@ function Checkout({ cart, branch, onBack, onSuccess }) {
               const product = getProduct(item.productId);
 
               return (
-                <div key={item.productId}>
+                <div className="review-item" key={item.id || `${item.productId}-${formatFlavorSummary(item.configuration)}`}>
                   <span>
                     {item.quantity}× {product.name}
+                    {item.configuration && (
+                      <small>{formatFlavorSummary(item.configuration)}</small>
+                    )}
                   </span>
 
                   <strong>{money.format(product.price * item.quantity)}</strong>
@@ -627,15 +877,63 @@ function Checkout({ cart, branch, onBack, onSuccess }) {
 }
 
 function Success({ result, onRestart }) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
+  const [copyLabel, setCopyLabel] = useState("Copiar pedido");
+  const selectedBranch = getBranch(result.order.branch.id);
+  const testNumber = normalizeWhatsAppNumber(
+    import.meta.env.VITE_WHATSAPP_TEST_NUMBER,
+  );
+  const branchNumber = normalizeWhatsAppNumber(selectedBranch?.whatsapp);
+  const whatsappNumber = testNumber || branchNumber;
+  const isWhatsAppTest =
+    Boolean(testNumber) || result.order.mode !== "production";
+  const paymentStatus = getPaymentStatus(result.payment);
+  const whatsappMessage = buildWhatsAppMessage(
+    result.order,
+    result.payment,
+    isWhatsAppTest,
+  );
+  const whatsappUrl = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`
+    : "";
+
+  async function copyOrder() {
+    try {
+      await navigator.clipboard.writeText(whatsappMessage);
+      setCopyLabel("Pedido copiado ✓");
+      window.setTimeout(() => setCopyLabel("Copiar pedido"), 2200);
+    } catch {
+      setCopyLabel("No se pudo copiar");
+    }
+  }
+
   return (
-    <main className="success-page">
+    <main
+      className={`success-page ${paymentStatus.approved ? "is-approved" : "is-pending"}`}
+      aria-live="polite"
+    >
+      <div className="success-orbit success-orbit--one" aria-hidden="true" />
+      <div className="success-orbit success-orbit--two" aria-hidden="true" />
+      <div className="success-burst" aria-hidden="true">
+        {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
+      </div>
+
       <img src="/assets/brand/cosa-nostra-monograma.png" alt="Cosa Nostra" />
 
       <div className="success-check">✓</div>
 
-      <span className="eyebrow">Simulación completada</span>
+      <span className="eyebrow">
+        {paymentStatus.approved ? "Pago aprobado" : "Pago recibido"}
+      </span>
 
-      <h1>El pedido de prueba quedó creado.</h1>
+      <h1>
+        {paymentStatus.approved
+          ? "¡Listo! Tu pedido quedó creado."
+          : "Tu pedido quedó pendiente."}
+      </h1>
 
       <p>
         Código <strong>{result.order.id}</strong>. En producción, esta pantalla
@@ -651,8 +949,48 @@ function Success({ result, onRestart }) {
 
         <span>Pago</span>
         <strong>
-          {result.payment.provider === "mock" ? "Nave simulado" : "Nave"}
+          {paymentStatus.label}
+          {result.payment.provider === "mock" ? " · Simulado" : " · Nave"}
         </strong>
+      </div>
+
+      <div className="whatsapp-panel">
+        <strong>Enviar el pedido al local</strong>
+        <p>
+          WhatsApp abrirá el mensaje completo. Revisalo y presioná Enviar para
+          terminar la prueba.
+        </p>
+
+        <div className="whatsapp-actions">
+          {whatsappUrl ? (
+            <a
+              className="whatsapp-button"
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Abrir WhatsApp
+            </a>
+          ) : (
+            <span className="whatsapp-missing">
+              Falta configurar el número de prueba.
+            </span>
+          )}
+
+          <button
+            className="copy-order-button"
+            type="button"
+            onClick={copyOrder}
+          >
+            {copyLabel}
+          </button>
+        </div>
+
+        {isWhatsAppTest && (
+          <small>
+            Modo prueba activo: el local no debe preparar este pedido.
+          </small>
+        )}
       </div>
 
       <button className="primary-button" type="button" onClick={onRestart}>
@@ -679,6 +1017,10 @@ export default function App() {
 
   const [result, setResult] = useState(null);
 
+  const [configureProduct, setConfigureProduct] = useState(null);
+
+  const [configuredItems, setConfiguredItems] = useState(readConfiguredCart);
+
   const [cart, setCart] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("cn-cart") || "{}");
@@ -689,12 +1031,13 @@ export default function App() {
 
   const branch = getBranch(branchId) || branches[0];
 
-  const cartCount = Object.values(cart).reduce(
+  const simpleCartCount = Object.values(cart).reduce(
     (total, quantity) => total + quantity,
     0,
   );
+  const cartCount = simpleCartCount + configuredItems.length;
 
-  const cartSubtotal = Object.entries(cart).reduce(
+  const simpleCartSubtotal = Object.entries(cart).reduce(
     (total, [productId, quantity]) => {
       const product = getProduct(productId);
 
@@ -702,6 +1045,11 @@ export default function App() {
     },
     0,
   );
+  const configuredCartSubtotal = configuredItems.reduce((total, item) => {
+    const product = getProduct(item.productId);
+    return total + (product?.price || 0);
+  }, 0);
+  const cartSubtotal = simpleCartSubtotal + configuredCartSubtotal;
 
   const filteredProducts = useMemo(() => {
     const normalized = search.trim().toLocaleLowerCase("es");
@@ -724,8 +1072,15 @@ export default function App() {
     localStorage.setItem("cn-cart", JSON.stringify(cart));
   }, [cart]);
 
+  useEffect(() => {
+    localStorage.setItem(CONFIGURED_CART_KEY, JSON.stringify(configuredItems));
+  }, [configuredItems]);
+
   function chooseBranch(id) {
-    if (branchId && branchId !== id && cartCount > 0) setCart({});
+    if (branchId && branchId !== id && cartCount > 0) {
+      setCart({});
+      setConfiguredItems([]);
+    }
 
     setBranchId(id);
 
@@ -760,6 +1115,8 @@ export default function App() {
     setCartOpen(false);
 
     setCart({});
+
+    setConfiguredItems([]);
   }
 
   if (result) {
@@ -770,6 +1127,8 @@ export default function App() {
     return (
       <Checkout
         cart={cart}
+
+        configuredItems={configuredItems}
 
         branch={branch}
 
@@ -914,9 +1273,13 @@ export default function App() {
 
                   quantity={cart[product.id] || 0}
 
+                  configuredCount={configuredItems.filter((item) => item.productId === product.id).length}
+
                   onAdd={() => add(product.id)}
 
                   onDecrease={() => decrease(product.id)}
+
+                  onConfigure={() => setConfigureProduct(product)}
                 />
               ))}
             </div>
@@ -994,6 +1357,8 @@ export default function App() {
 
         cart={cart}
 
+        configuredItems={configuredItems}
+
         branch={branch}
 
         onClose={() => setCartOpen(false)}
@@ -1002,11 +1367,27 @@ export default function App() {
 
         onDecrease={decrease}
 
+        onRemoveConfigured={(id) =>
+          setConfiguredItems((current) => current.filter((item) => item.id !== id))
+        }
+
         onCheckout={() => {
           setCartOpen(false);
           setCheckoutOpen(true);
         }}
       />
+
+      {configureProduct && (
+        <FlavorSelector
+          product={configureProduct}
+          onClose={() => setConfigureProduct(null)}
+          onConfirm={(item) => {
+            setConfiguredItems((current) => [...current, item]);
+            setConfigureProduct(null);
+            setCartOpen(true);
+          }}
+        />
+      )}
 
       {pickerOpen && (
         <BranchPicker

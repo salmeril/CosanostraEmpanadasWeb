@@ -118,10 +118,12 @@ export const products = [
     id: 'promo-media-docena',
     category: 'promos',
     name: 'Media docena a elección',
-    description: 'Elegí seis empanadas clásicas o gourmet desde el carrito.',
+    description: 'Elegí seis empanadas clásicas o gourmet y armala a tu manera.',
     price: 14100,
     image: '/assets/products/calabresa.webp',
     badge: 'Promo demo',
+    configurationType: 'empanada-flavors',
+    selectionCount: 6,
   },
   {
     id: 'promo-docena',
@@ -131,8 +133,13 @@ export const products = [
     price: 27400,
     image: '/assets/products/cuatro-quesos.webp',
     badge: 'Promo demo',
+    configurationType: 'empanada-flavors',
+    selectionCount: 12,
   },
 ]
 
 export const getBranch = (branchId) => branches.find((branch) => branch.id === branchId)
 export const getProduct = (productId) => products.find((product) => product.id === productId)
+export const empanadaFlavors = products.filter((product) =>
+  ['empanadas', 'gourmet'].includes(product.category),
+)

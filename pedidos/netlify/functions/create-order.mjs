@@ -8,12 +8,51 @@ function cleanText(value, maxLength) {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : ''
 }
 
+function normalizeConfiguration(product, rawConfiguration) {
+  if (!product.configurationType) return null
+
+  if (
+    rawConfiguration?.type !== product.configurationType ||
+    !Array.isArray(rawConfiguration?.selections)
+  ) {
+    throw new RequestError(
+      'INVALID_CONFIGURATION',
+      `Falta elegir los sabores de ${product.name}.`,
+    )
+  }
+
+  const selections = rawConfiguration.selections.map((rawSelection) => {
+    const flavor = getProduct(rawSelection?.productId)
+    const quantity = Number(rawSelection?.quantity)
+
+    if (!flavor || !['empanadas', 'gourmet'].includes(flavor.category)) {
+      throw new RequestError('INVALID_FLAVOR', 'Uno de los sabores elegidos no está disponible.')
+    }
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > product.selectionCount) {
+      throw new RequestError('INVALID_FLAVOR_QUANTITY', `Cantidad inválida para ${flavor.name}.`)
+    }
+
+    return { productId: flavor.id, name: flavor.name, quantity }
+  })
+
+  const selectedCount = selections.reduce((sum, selection) => sum + selection.quantity, 0)
+  if (selectedCount !== product.selectionCount) {
+    throw new RequestError(
+      'INCOMPLETE_CONFIGURATION',
+      `${product.name} debe tener exactamente ${product.selectionCount} empanadas.`,
+    )
+  }
+
+  return { type: product.configurationType, selections }
+}
+
 function normalizeItems(rawItems) {
   if (!Array.isArray(rawItems) || rawItems.length === 0) {
     throw new RequestError('EMPTY_CART', 'El carrito está vacío.')
   }
 
   const grouped = new Map()
+  const configured = []
   for (const rawItem of rawItems) {
     const product = getProduct(rawItem?.productId)
     const quantity = Number(rawItem?.quantity)
@@ -25,10 +64,29 @@ function normalizeItems(rawItems) {
       throw new RequestError('INVALID_QUANTITY', `Cantidad inválida para ${product.name}.`)
     }
 
+    if (product.configurationType) {
+      if (quantity !== 1) {
+        throw new RequestError(
+          'INVALID_CONFIGURED_QUANTITY',
+          `Agregá cada ${product.name} por separado para elegir sus sabores.`,
+        )
+      }
+
+      configured.push({
+        productId: product.id,
+        name: product.name,
+        quantity: 1,
+        unitPrice: product.price,
+        lineTotal: product.price,
+        configuration: normalizeConfiguration(product, rawItem.configuration),
+      })
+      continue
+    }
+
     grouped.set(product.id, (grouped.get(product.id) || 0) + quantity)
   }
 
-  return [...grouped.entries()].map(([productId, quantity]) => {
+  const simpleItems = [...grouped.entries()].map(([productId, quantity]) => {
     if (quantity > MAX_ITEM_QUANTITY) {
       throw new RequestError('INVALID_QUANTITY', 'La cantidad máxima por producto es 50.')
     }
@@ -40,8 +98,11 @@ function normalizeItems(rawItems) {
       quantity,
       unitPrice: product.price,
       lineTotal: product.price * quantity,
+      configuration: null,
     }
   })
+
+  return [...simpleItems, ...configured]
 }
 
 function makeOrderId() {

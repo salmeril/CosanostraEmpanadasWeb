@@ -4,7 +4,7 @@ const delay = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms))
 
 function buildMockOrder(payload) {
   const branch = getBranch(payload.branchId)
-  const items = payload.items.map(({ productId, quantity }) => {
+  const items = payload.items.map(({ productId, quantity, configuration }) => {
     const product = getProduct(productId)
     return {
       productId,
@@ -12,6 +12,7 @@ function buildMockOrder(payload) {
       quantity,
       unitPrice: product.price,
       lineTotal: product.price * quantity,
+      configuration: configuration || null,
     }
   })
   const subtotal = items.reduce((total, item) => total + item.lineTotal, 0)
